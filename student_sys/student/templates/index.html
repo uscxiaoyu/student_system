@@ -8,7 +8,7 @@
             <p> 已注册学生 </p>
             <ul>
                 {% for student in students reversed %}
-                    <li>{{ student.name }} --- {{ student.department_name }} --- {{ student.major_name }} </li>
+                    <li>{{ student.name }} {{ student.department_name }}  {{ student.major_name }} </li>
                 {% endfor %}
             </ul>
         </div>
