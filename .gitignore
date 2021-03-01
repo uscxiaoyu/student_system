@@ -1,0 +1,8 @@
+*.xls
+*.xlsx
+*.csv
+*.txt
+*/data/*
+*.ini
+*.DS_Store
+**/__pycache__/*

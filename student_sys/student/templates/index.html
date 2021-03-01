@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>学员管理系统</title>
+    </head>
+    <body>
+        <div>
+            <p> 已注册学生 </p>
+            <ul>
+                {% for student in students reversed %}
+                    <li>{{ student.name }} --- {{ student.department_name }} --- {{ student.major_name }} </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <hr/>
+        <div>
+            <p> 新注册学生 </p>
+            <form action="/" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="提交" />
+            </form>
+        </div>
+    </body>
+
+</html>
