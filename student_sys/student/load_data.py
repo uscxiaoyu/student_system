@@ -45,7 +45,7 @@ def load_excel(f_path, col_names=["学号", "姓名", "性别", "学院", "年�
     return d_dict
 
 
-def load_studentjoinproject(dir_name):
+def load_studentjoinproject(dir_name, semester):
     f_paths = os.listdir(dir_name)  # 读取所有文件名
     pattern = re.compile("\d+\s+(.+).xls")  # 匹配文件名
     try:
@@ -59,9 +59,9 @@ def load_studentjoinproject(dir_name):
                     prj_name = prj_names[0]
                     for i, s_id in enumerate(d_dict["学号"]):
                         if isinstance(s_id, (int, float)):
-                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], project_name=prj_name)
+                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], project_name=prj_name, semester=semester)
                         elif isinstance(s_id, str) and ('/' in s_id or 'EBI' in s_id):
-                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], project_name=prj_name)
+                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], project_name=prj_name, semester=semester)
                         else:
                             f.write(f_path + '    ' + str(s_id) + '  '+ str(d_dict["姓名"][i]) + '\n')
                     print("  ", f_path, "导入成功")
@@ -83,5 +83,15 @@ if __name__ == "__main__":
     s_dir= BASE_DIR + "活动名称与学生匹配表/"
     dirs = [s_dir+d for d in os.listdir(s_dir)]
     for dir_name in dirs:
-        load_studentjoinproject(dir_name)
+        if "2018-2019学年第一学期校级品牌活动认定汇总表" in dir_name:
+            semester="2018-2019-1"
+        elif "2018-2019学年第二学期校级品牌活动认定汇总表" in dir_name:
+            semester="2018-2019-2"
+        elif "2019-2020学年第一学期校级品牌活动认定汇总表" in dir_name:
+            semester="2019-2020-1"
+        else:
+            semester="2019-2020-2"
+            
+        load_studentjoinproject(dir_name, semester)
+        print(f"{dir_name}导入成功!")
         

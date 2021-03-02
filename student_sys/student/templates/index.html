@@ -4,22 +4,21 @@
         <title>学员管理系统</title>
     </head>
     <body>
-        <div>
-            <p> 已注册学生 </p>
-            <ul>
-                {% for student in students reversed %}
-                    <li>{{ student.name }} {{ student.department_name }}  {{ student.major_name }} </li>
-                {% endfor %}
-            </ul>
-        </div>
         <hr/>
         <div>
             <p> 新注册学生 </p>
             <form action="/" method="post">
                 {% csrf_token %}
-                {{ form }}
+                <table>
+                    {{ form.as_table }}
+                </table>
                 <input type="submit" value="提交" />
             </form>
+        </div>
+        <hr/>
+        <div>
+            <input value=请输入姓名>
+            </input>
         </div>
     </body>
 

@@ -35,29 +35,30 @@ from .forms import StudentForm, ProjectForm, StudentJoinProjectForm
 def get_report(student_id):
     s = Student.objects.get(student_id=student_id)[:1]
     if s:
+        if s.grade == 0:
+            grade = int('20' + str(s.student_id[:2]))
+        else:
+            grade = s.grade
+            
         sps = StudentJoinProject.objects.get(s_id=student_id)
-        p_info = {}
+        p_info = {}  # 写入参加活动信息
         for sp in sps:
             p_name = sp.project_name
             p = Project.objects.find(project_name=p_name)[:1]
             category = p.category
-            semester = p.semester
-            depart_name = p.department_name
             if category in p_info:
-                p_info[category].append([p_name, depart_name, semester])
+                c = p_info[category][-1][0]
+                p_info[category].append([c + 1, p.semester, p.p_name, p.department_name, p.certify_state])
             else:
-                p_info[category] = [[p_name, depart_name, semester]]
-
+                p_info[category] = [[1, p.semester, p.p_name, p.department_name, p.certify_state]]
+        
         res_dict = {
-            "student_id": student_id,
-            "student_name": s.name,
-            "department": s.department_name,
-            "major": s.major_name,
-            "projects": p_info,
+            "基础信息": [s.department_name, grade, s.major_name, student_id, s.name, s.sex],
+            "参加活动经历": p_info
         }
         return res_dict
     else:
-        return None
+        raise ValueError(f"学号{student_id}存在!")
 
 
 class IndexView(View):
