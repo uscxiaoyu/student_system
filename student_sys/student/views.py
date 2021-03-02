@@ -1,4 +1,8 @@
+from django.contrib import auth
+from django.http.response import HttpResponse
 from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponseRedirect, Http404
 from django.http import StreamingHttpResponse
 from django.http import FileResponse
@@ -76,11 +80,24 @@ class IndexView(View):
         return render(request, self.template_name, context=context)
 
     def post(self, request):
-        form = StudentForm()
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse("index"))
+        # form = StudentForm()
+        # if form.is_valid():
+        #     form.save()
+        #     return HttpResponseRedirect(reverse("index"))
 
-        context = self.get_context()
-        context.update({"form": form})
-        return render(request, self.template_name, context=context)
+        # context = self.get_context()
+        # context.update({"form": form})
+        u = request.POST.get('_id')
+        p = request.POST.get('pwd')
+        if User.objects.filter(username=u):
+            user = authenticate(username=u, password=p)
+            if user:
+                if user.is_active:
+                    login(request, user)
+                return HttpResponse('登录成功')
+            else:
+                tips = '帐号密码错误，请重新输入'
+        else:
+            tips = '用户不存在，请注册'
+                   
+        return render(request, self.template_name, locals())

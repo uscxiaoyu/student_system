@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+{% comment %} <!DOCTYPE HTML>
 <html>
     <head>
         <title>学员管理系统</title>
@@ -22,4 +22,129 @@
         </div>
     </body>
 
+</html> {% endcomment %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>首页</title>
+    <script src="/static/axios.min.js"></script>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h2>第二课堂成绩管理系统</h2>
+            </div>
+        </div>
+        <div class="content">
+            <div class="login">
+                <form action="/loginPost" method="post">
+                    <p>
+                        <label for="_id">账号</label>
+                        <input type="text" name="_id" id="_id" placeholder="输入账号" onfocus="clearAlarm()">
+                        <span class='alarm-info'></span>
+                    </p>
+                    <p>
+                        <label for="pwd">密码</label>
+                        <input type="password" name="pwd" id="pwd" placeholder="输入密码" onfocus="clearAlarm()"> 
+                        <span class='alarm-info'></span>
+                    </p>
+                    <p>
+                        <span style="font-size: 0.9em; font-weight: lighter">
+                            <input type="radio" name="role" id="role" value="学生" checked="checked">学生
+                        </span>
+                        <span style="font-size: 0.9em; font-weight: lighter">
+                            <input type="radio" name="role" id="role" value="教师">教师
+                        </span>
+                    </p>
+                    <p>
+                        <button type="button" onclick="submitDATA()">登陆</button>
+                        <button type="reset" style="margin-left: 2em" onclick="clearAlarm()">重置</button>
+                        <span class="alarm-info"></span>
+                    </p>
+                    {% comment %} <p>
+                        <a href="signUp.html">注册</a>
+                        <a href="findPwd.html">密码找回</a>
+                    </p> {% endcomment %}
+                </form>
+            </div>
+        </div>
+        <div class="footer">
+            <p style="text-align: center"> <a href="index.html">首页</a> | <a href="">关于本系统</a>  |  ©2021- 肖宇. All Rights Reserved.</p>
+        </div>
+    </div>
+</body>
+<script>
+    var clearAlarm = function () {
+        var alert_spans = document.getElementsByClassName("alarm-info")
+        for (let sp of alert_spans) {
+            sp.innerHTML = "";
+            sp.style.display = "none";
+        }
+    }
+
+    var checkSID = function () {
+        var div_sid = document.getElementById("_id");
+        var sid_value = div_sid.value.trim();
+        var alert_span = document.getElementsByClassName("alarm-info")[0];  // 用于提示账号错误信息
+        if (sid_value == "") {
+            alert_span.style.display = "inline";
+            alert_span.innerHTML = "账号为空!";
+        } else if (!/^[0-9]+$/.test(sid_value)) {
+            alert_span.style.display = "inline";
+            alert_span.innerHTML = "账号应全是数字!";
+        } else {
+            return sid_value;
+        }
+
+    };
+
+    var checkPWD = function () {
+        var div_pwd = document.getElementById("pwd");
+        var pwd_value = div_pwd.value;
+        var alert_span = document.getElementsByClassName("alarm-info")[1]; // 用于提示密码错误信息
+        if (pwd_value == "") {
+            alert_span.style.display = "inline";
+            alert_span.innerHTML = "密码为空!";
+        } else if (/\s/.test(pwd_value)) {
+            alert_span.style.display = "inline";
+            alert_span.innerHTML = "密码包含空字符!";
+        } else {
+            return pwd_value;
+        }
+    }
+
+    var submitDATA = function () {
+        var _id = checkSID();
+        var pwd = checkPWD();
+        var role = document.getElementById("role").value
+        if (_id && pwd) {
+            axios.post("/loginPost", {_id: _id, pwd: pwd, role: role})
+                .then(function(res){
+                    console.log(res);
+                    var resData = res.data;
+                    var alert_span = document.getElementsByClassName("alarm-info")[2];
+                    if (resData.i_code == 0) {
+                        var c_text = document.getElementsByClassName("content")[0];
+                        c_text.innerHTML = resData.msg;
+                    } else {
+                        alert_span.style.display = "inline";
+                        alert_span.innerHTML = resData.msg;
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                })
+        } else {
+        }
+
+    }
+
+</script>
 </html>
