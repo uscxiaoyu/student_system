@@ -1,18 +1,18 @@
 from re import template
 from django.contrib import auth
 from django.http.response import HttpResponse
-from django.shortcuts import render
-from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User, Permission
 from django.contrib.auth import login, logout, authenticate
-from django.http import HttpResponseRedirect, Http404
-from django.http import StreamingHttpResponse
-from django.http import FileResponse
+from django.contrib.auth.decorators import login_required, permission_required
+from django.utils.decorators import method_decorator
 from django.urls import reverse
 from django.views import View
 from .models import Student, Project, StudentJoinProject
 from .forms import StudentForm, ProjectForm, StudentJoinProjectForm
 from .write_docx import ReportDocx
 import json
+
 
 
 # def index(request):
@@ -38,38 +38,9 @@ import json
 
 #     return render(request, "index.html", context=context)
 
-
-def get_report(student_id):
-    s = Student.objects.get(student_id=student_id)[:1]
-    if s:
-        if s.grade == 0:
-            grade = int('20' + str(s.student_id[:2]))
-        else:
-            grade = s.grade
-            
-        sps = StudentJoinProject.objects.get(s_id=student_id)
-        p_info = {}  # 写入参加活动信息
-        for sp in sps:
-            p_name = sp.project_name
-            p = Project.objects.find(project_name=p_name)[:1]
-            category = p.category
-            if category in p_info:
-                c = p_info[category][-1][0]
-                p_info[category].append([c + 1, p.semester, p.p_name, p.department_name, p.certify_state])
-            else:
-                p_info[category] = [[1, p.semester, p.p_name, p.department_name, p.certify_state]]
-        
-        res_dict = {
-            "基础信息": [s.department_name, grade, s.major_name, student_id, s.name, s.sex],
-            "参加活动经历": p_info
-        }
-        return res_dict
-    else:
-        raise ValueError(f"学号{student_id}存在!")
-
-
 class IndexView(View):
     template_name = "index.html"
+    login_page = "main.html"
 
     def get_context(self):
         students = Student.get_all()[:100]
@@ -97,28 +68,61 @@ class IndexView(View):
             if user:
                 if user.is_active:
                     login(request, user)
-                return HttpResponse('登录成功')
+                return render(request, self.login_page, locals())
             else:
                 tips = '帐号密码错误，请重新输入'
         else:
             tips = '用户不存在，请注册'
                    
         return render(request, self.template_name, locals())
-    
-class DownloadDocxView(View):
-    template = "main.html"
-    
-    def get(self, request):
-        return render(request, self.template)
 
-    def post(self, request):
-        # body = request.body.decode('utf-8')
-        # res = json.loads(body)
-        # student_id = res["s_id"]
+def logoutView(request):
+    logout(request)
+    return redirect("index")
+
+
+@login_required(login_url="index")
+def downloadDocxView(request):
+    if request.method == "POST":
         student_id = request.POST.get("_id")
         reportDoc = ReportDocx(student_id)
+        reportDoc.generate_docx()  # 生成docx文件
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response["Content-Disposition"] = f'attachment; filename={student_id}-report.docx'
         reportDoc.document.save(response)
         return response
+    else:
+        return render(request, "main.html")
+
+def checkDocxView(request):
+    body = request.body.decode('utf-8')
+    res = json.loads(body)
+    student_id = res["s_id"]
+    reportDoc = ReportDocx(student_id)
+    infos = reportDoc.hint_list
+    if infos:
+        response = '<p style="color: #FF5252;">以下项目查询出错，很可能是没在项目表中找到对应的项目</p>'
+        for i, info in enumerate(infos):
+            a = '<p style="color: #FF5252;">' + f'{i+1}. ' + info[0] + ': ' + info[1] + '</p>'
+            response += a
+        return HttpResponse(response)
+    else:
+        return HttpResponse('<p>检查完成, 一切正常!</p>')
+
+# class DownloadDocxView(View):
+#     template = "main.html"
+    
+#     def get(self, request):
+#         return render(request, self.template)
+
+#     def post(self, request):
+#         # body = request.body.decode('utf-8')
+#         # res = json.loads(body)
+#         # student_id = res["s_id"]
+#         student_id = request.POST.get("_id")
+#         reportDoc = ReportDocx(student_id)
+#         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+#         response["Content-Disposition"] = f'attachment; filename={student_id}-report.docx'
+#         reportDoc.document.save(response)
+#         return response
         

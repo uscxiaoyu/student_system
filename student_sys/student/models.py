@@ -35,7 +35,7 @@ class Project(models.Model):
     project_id = models.IntegerField(primary_key=True, verbose_name="活动编号")
     name = models.CharField(max_length=128, verbose_name="活动名称")
     department_name = models.CharField(max_length=128, verbose_name="主办单位")
-    semester = models.CharField(max_length=64, verbose_name="活动时间")
+    semester = models.CharField(max_length=64, null=True, blank=True, default=None, verbose_name="活动时间")
     category = models.CharField(max_length=64, verbose_name="活动类型")
     certify_state = models.CharField(max_length=64, verbose_name="认证状态")
 
@@ -71,6 +71,7 @@ class StudentJoinProject(models.Model):
     s_id = models.CharField(max_length=64, verbose_name="学号")
     student_name = models.CharField(max_length=64, verbose_name="姓名")
     p_id = models.IntegerField(default=None, verbose_name="活动编号")
+    semester = models.CharField(max_length=64, null=True, blank=True, verbose_name="活动时间")
     project_name = models.CharField(max_length=128, verbose_name="活动名称")
 
     def __str__(self) -> str:

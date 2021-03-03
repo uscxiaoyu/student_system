@@ -59,14 +59,14 @@ def load_studentjoinproject(dir_name, semester):
                     prj_name = prj_names[0]
                     for i, s_id in enumerate(d_dict["学号"]):
                         if isinstance(s_id, (int, float)):
-                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], project_name=prj_name, semester=semester)
+                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester)
                         elif isinstance(s_id, str) and ('/' in s_id or 'EBI' in s_id):
-                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], project_name=prj_name, semester=semester)
+                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester)
                         else:
                             f.write(f_path + '    ' + str(s_id) + '  '+ str(d_dict["姓名"][i]) + '\n')
                     print("  ", f_path, "导入成功")
                 except Exception as e:
-                    print("  ", f_path, "导入失败")
+                    print("  ", f_path, "导入失败", e)
                     f.write(f_path + "出错: " + str(e) + '\n')
         f.write("\n\n")
     except Exception as e:
@@ -80,6 +80,7 @@ def load_studentjoinproject(dir_name, semester):
 if __name__ == "__main__":
     # student = Student.objects.all()[0]
     # print(student.student_id, student.name, student.department_name)
+    StudentJoinProject.objects.all().delete()
     s_dir= BASE_DIR + "活动名称与学生匹配表/"
     dirs = [s_dir+d for d in os.listdir(s_dir)]
     for dir_name in dirs:

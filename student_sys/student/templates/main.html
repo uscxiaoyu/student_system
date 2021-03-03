@@ -12,22 +12,29 @@
     <div class="container">
         <div class="header">
             <div class="logo">
-                <h2>成绩单下载</h2>
+                <h2>欢迎您, {{ request.user }}! </h2>
+                <hr/>
+                <a href="/logout" style="font-size: 12; font-color: yellow">退出登录<a>
             </div>
         </div>
         <div class="content">
             <form action="/downloadDocx" method="post">
                 {% comment %} {% csrf_token %} {% endcomment %}
                 <p>
-                    <label for="_id">下载文件</label>
+                    <label for="_id">查询</label>
                     <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()">
                     <span class='alarm-info'></span>
                 </p>
                 <p>
-                    <input type="submit" value="提交" />
-                    <span class="alarm-info" id="res_info"></span>
+                    <button type="button" onclick="submitDATA()">检查文件</button>
+                    <span class="alarm-info"></span>
                 </p>
+                <p>
+                    <input type="submit" value="下载docx文件" />
+                </p>
+                <span class="alarm-info" id="res_info"></span>
             </form>
+            
         </div>
     </div>
 </body>
@@ -44,18 +51,19 @@
         var student_id = document.getElementById("_id").value
         console.log(student_id)
         if (student_id) {
-            axios.post("/downloadDocx", {s_id: student_id})
+            axios.post("/checkDocx", {s_id: student_id})
                 .then(function(res){
                     var resData = res.data;
+                    console.log(resData)
                     var alert_span = document.getElementById("res_info");
                     alert_span.style.display = "inline";
-                    alert_span.innerHTML = resData.msg;
+                    alert_span.innerHTML = resData;
                 })
                 .catch(function(err){
                     console.log(err);
                 })
         } else {
-            console.log("学号为空!")
+            console.log("帐号为空!")
         }
     }
 

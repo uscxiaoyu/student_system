@@ -21,6 +21,7 @@ class StudentJoinProjectForm(forms.Form):
     student_name = forms.CharField(max_length=64, label="姓名")
     p_id = forms.IntegerField(label="活动编号")
     project_name = forms.CharField(max_length=128, label="活动名称")
+    semester = forms.CharField(max_length=64, label="活动时间")
 
 class DepartmentForm(forms.Form):
     department_id = forms.IntegerField(label="部门编号")

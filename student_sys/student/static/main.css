@@ -59,11 +59,11 @@ body {
 }
 
 .login {
-    background-color: #dddddd;
+    background-color: #ece8e8;
     padding-top: 15px;
     position: absolute;
-    opacity: 0.9;
-    width: 350px;
+    opacity: 0.8;
+    width: 300px;
     top: 10%;
     right: 10%;
     border-radius: 10px;

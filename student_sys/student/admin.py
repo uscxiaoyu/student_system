@@ -40,5 +40,5 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(StudentJoinProject)
 class StudentJoinProject(admin.ModelAdmin):
     search_fields = ("s_id", "student_name", "project_name")
-    list_filter = ("project_name",)
-    list_display = ("s_id", "student_name", "project_name")
+    list_filter = ("semester", )
+    list_display = ("s_id", "student_name", "project_name", "semester")

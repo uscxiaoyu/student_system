@@ -34,7 +34,7 @@ class ReportDocx:
         self.ex_content_head = ex_content_head  # 其它经历的表格标题
         self.hint_list = []  # 提示信息
         self.document = Document()  # 初始化docx文件
-        self.generate_docx()  # 生成docx文件 
+        self.get_report()  # 生成docx文件 
 
     def get_report(self):
         s = Student.objects.get(student_id=self.student_id)
@@ -56,7 +56,7 @@ class ReportDocx:
             for sp in sps:
                 p_name = sp.project_name
                 try:
-                    p = Project.objects.get(name=p_name)
+                    p = Project.objects.get(name=p_name, semester=sp.semester)
                     category = p.category
                     if category in p_info:
                         c = int(p_info[category][-1][0])
@@ -80,7 +80,6 @@ class ReportDocx:
 
     def generate_docx(self):
         # 标题行
-        self.get_report()
         h1 = self.document.add_heading(level=1)
         h1.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # 居中对齐
         c = h1.add_run('上海对外经贸大学学生第二课堂经历证明')
@@ -129,6 +128,9 @@ class ReportDocx:
             table = self.document.add_table(rows=len(content.get(title, []))+1, cols=5)
             head_row = table.rows[0].cells  # 标题行单元格
             for j, cell in enumerate(head_row):
+                if j == 1:
+                    cell.width = Cm(4)
+                    
                 self._setCellBackgroundColor(cell)
                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
                 p = cell.paragraphs[0]
@@ -146,6 +148,9 @@ class ReportDocx:
                 for k, d in enumerate(content[title]):  # 内容行单元格
                     row = table.rows[k+1].cells
                     for l, cell in enumerate(row):
+                        if j == 1:
+                            cell.width = Cm(4)
+                            
                         cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
                         p = cell.paragraphs[0]
                         # p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -169,6 +174,9 @@ class ReportDocx:
             head_row = table.rows[0].cells  # 标题行单元格
             
             for j, cell in enumerate(head_row):
+                if j == 1:
+                    cell.width = Cm(4)
+                    
                 self._setCellBackgroundColor(cell)
                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
                 p = cell.paragraphs[0]
