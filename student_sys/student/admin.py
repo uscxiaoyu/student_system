@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.contrib.admin.decorators import register
 from .models import Student, Department, Project, StudentJoinProject
 
-admin.site.site_title = "学生第二课堂成绩管理系统"
-admin.site.site_header = "第二课堂成绩管理系统"
+admin.site.site_title = "第二课堂成绩数据管理系统"
+admin.site.site_header = "第二课堂成绩后台管理系统"
 
 
 @admin.register(Student)
