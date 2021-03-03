@@ -138,6 +138,13 @@ input[type=radio] {
     top: 4px
 }
 
+input[type=submit] {
+    padding: 0.2em 0.2em 0.2em 0.2em;
+    height: 2em;
+    background-color: #82a3ca;
+    border-radius: 5px;
+}
+
 button {
     padding: 0.4em 0.5em;
     border-radius: 5px;

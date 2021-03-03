@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>主页</title>
+    <script src="/static/axios.min.js"></script>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h2>成绩单下载</h2>
+            </div>
+        </div>
+        <div class="content">
+            <form action="/downloadDocx" method="post">
+                {% comment %} {% csrf_token %} {% endcomment %}
+                <p>
+                    <label for="_id">下载文件</label>
+                    <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()">
+                    <span class='alarm-info'></span>
+                </p>
+                <p>
+                    <input type="submit" value="提交" />
+                    <span class="alarm-info" id="res_info"></span>
+                </p>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    var clearAlarm = function () {
+        var alert_spans = document.getElementsByClassName("alarm-info")
+        for (let sp of alert_spans) {
+            sp.innerHTML = "";
+            sp.style.display = "none";
+        }
+    }
+
+    var submitDATA = function () {
+        var student_id = document.getElementById("_id").value
+        console.log(student_id)
+        if (student_id) {
+            axios.post("/downloadDocx", {s_id: student_id})
+                .then(function(res){
+                    var resData = res.data;
+                    var alert_span = document.getElementById("res_info");
+                    alert_span.style.display = "inline";
+                    alert_span.innerHTML = resData.msg;
+                })
+                .catch(function(err){
+                    console.log(err);
+                })
+        } else {
+            console.log("学号为空!")
+        }
+    }
+
+</script>
+</html>
+
+ {% comment %} onclick="submitDATA()" {% endcomment %}

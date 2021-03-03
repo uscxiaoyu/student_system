@@ -1,3 +1,4 @@
+from re import template
 from django.contrib import auth
 from django.http.response import HttpResponse
 from django.shortcuts import render
@@ -10,6 +11,8 @@ from django.urls import reverse
 from django.views import View
 from .models import Student, Project, StudentJoinProject
 from .forms import StudentForm, ProjectForm, StudentJoinProjectForm
+from .write_docx import ReportDocx
+import json
 
 
 # def index(request):
@@ -101,3 +104,21 @@ class IndexView(View):
             tips = '用户不存在，请注册'
                    
         return render(request, self.template_name, locals())
+    
+class DownloadDocxView(View):
+    template = "main.html"
+    
+    def get(self, request):
+        return render(request, self.template)
+
+    def post(self, request):
+        # body = request.body.decode('utf-8')
+        # res = json.loads(body)
+        # student_id = res["s_id"]
+        student_id = request.POST.get("_id")
+        reportDoc = ReportDocx(student_id)
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response["Content-Disposition"] = f'attachment; filename={student_id}-report.docx'
+        reportDoc.document.save(response)
+        return response
+        
