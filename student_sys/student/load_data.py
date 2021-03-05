@@ -1,3 +1,4 @@
+import enum
 import re
 import os, sys
 import django
@@ -13,14 +14,15 @@ django.setup()
 from student.models import Student, Project, StudentJoinProject
 
 BASE_DIR = "data/"
-def load_student():
-    return
-    
-def load_project():
-    return
+PATTERN = re.compile("\d+\s+(.+).xls")  # 匹配文件名
+COL_NAMES = ["学号", "姓名", "性别", "学院", "年级", "专业", 
+             "活动类型", "活动时间", "主办单位", "活动名称", "认证状态"]
 
 
-def load_excel(f_path, col_names=["学号", "姓名", "性别", "学院", "年级", "专业", "活动类型", "活动时间", "主办单位", "活动名称", "认证状态"]):
+def load_excel(f_path, col_names=COL_NAMES):
+    """
+    读取excel文件
+    """
     d_dict = {}
     if '.xlsx' in f_path:
         wb = load_workbook(filename=f_path)
@@ -44,30 +46,77 @@ def load_excel(f_path, col_names=["学号", "姓名", "性别", "学院", "年�
                 
     return d_dict
 
+def insert_studentJoinProject(f_path, dir_name, semester, table=StudentJoinProject):
+    """
+    导入单个参与项目文件
+    """
+    prj_names = PATTERN.findall(f_path)
+    info_text = ""
+    if prj_names:  # 如果是合法的文件
+        try:
+            d_dict = load_excel(dir_name + '/' + f_path)
+            prj_name = prj_names[0]
+            for i, s_id in enumerate(d_dict["学号"]):
+                if isinstance(s_id, (int, float)):
+                    table.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester)
+                elif isinstance(s_id, str) and ('/' in s_id or 'EBI' in s_id):
+                    table.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester)
+                else:
+                    print(f"    {s_id}, {d_dict['姓名'][i]}记录导入失败")
+                    info_text +='    ' + str(s_id) + '  '+ str(d_dict["姓名"][i]) + '\n'
+            print("  ", f_path, "导入成功")
+        except Exception as e:
+            print("  ", f_path, "导入失败", e)
+            info_text += f"{prj_name}出错: " + str(e) + '\n'
+        finally:
+            return info_text
+    else:
+        print(f"{f_path}的项目名称为空!")
+        info_text = f"{f_path}的项目名称为空!\n"
+        return info_text
+
+def load_student(f_path):
+    """
+    导入学生记录
+    """
+    d_dict = load_excel(f_path)
+    for i, s_id in enumerate(d_dict["学号"]):
+        record = {
+            "student_id": s_id, "name": d_dict["姓名"][i], 
+            "sex": 1 if d_dict["性别"][i]=="男" else 2,
+            "department_name": d_dict["学院"][i],
+            "major_name": d_dict["专业"][i],
+            "grade": int("20"+str(s_id)[:2])}
+        
+        Student.objects.create(**record)
+    
+def load_project(f_path):
+    """
+    导入项目记录
+    """
+    d_dict = load_excel(f_path)
+    for i, name in enumerate(d_dict["活动名称"]):
+        record = {
+            "name": name,
+            "department_name": d_dict["主办单位"][i],
+            "semester": d_dict["活动时间"][i],
+            "category": d_dict["活动类型"][i],
+            "certify_state": d_dict["认证状态"][i]
+        }
+        Project.objects.create(**record)
 
 def load_studentjoinproject(dir_name, semester):
+    """
+    导入文件夹里的所有文件
+    """
     f_paths = os.listdir(dir_name)  # 读取所有文件名
-    pattern = re.compile("\d+\s+(.+).xls")  # 匹配文件名
     try:
         f = open(dir_name + "/log.txt", "w")
         print(f"开始导入{dir_name}文件夹中的excel文件:")
         for f_path in f_paths:
-            prj_names = pattern.findall(f_path)
-            if prj_names:  # 如果是合法的文件
-                try:
-                    d_dict= load_excel(dir_name + '/' + f_path)
-                    prj_name = prj_names[0]
-                    for i, s_id in enumerate(d_dict["学号"]):
-                        if isinstance(s_id, (int, float)):
-                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester)
-                        elif isinstance(s_id, str) and ('/' in s_id or 'EBI' in s_id):
-                            StudentJoinProject.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester)
-                        else:
-                            f.write(f_path + '    ' + str(s_id) + '  '+ str(d_dict["姓名"][i]) + '\n')
-                    print("  ", f_path, "导入成功")
-                except Exception as e:
-                    print("  ", f_path, "导入失败", e)
-                    f.write(f_path + "出错: " + str(e) + '\n')
+            info_text = insert_studentJoinProject(f_path, dir_name, semester)
+            f.write(info_text)
+
         f.write("\n\n")
     except Exception as e:
         f.write("出错: " + str(e) + '\n')
@@ -85,13 +134,16 @@ if __name__ == "__main__":
     dirs = [s_dir+d for d in os.listdir(s_dir)]
     for dir_name in dirs:
         if "2018-2019学年第一学期校级品牌活动认定汇总表" in dir_name:
-            semester="2018-2019-1"
+            semester="2018-2019学年第一学期"
         elif "2018-2019学年第二学期校级品牌活动认定汇总表" in dir_name:
-            semester="2018-2019-2"
+            semester="2018-2019学年第二学期"
         elif "2019-2020学年第一学期校级品牌活动认定汇总表" in dir_name:
-            semester="2019-2020-1"
+            semester="2019-2020学年第一学期"
+        elif "2019-2020学年第二学期校级品牌活动认定汇总表" in dir_name:
+            semester="2019-2020学年第二学期"
         else:
-            semester="2019-2020-2"
+            print(dir_name, "is not found")
+            break
             
         load_studentjoinproject(dir_name, semester)
         print(f"{dir_name}导入成功!")
