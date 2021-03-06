@@ -14,7 +14,6 @@ from .write_docx import ReportDocx
 import json
 
 
-
 # def index(request):
 #     students = Student.get_all()
 #     if request.method == "POST":
@@ -37,6 +36,7 @@ import json
 #     context = {"students": students, "form": form}
 
 #     return render(request, "index.html", context=context)
+
 
 class IndexView(View):
     template_name = "index.html"
@@ -61,8 +61,8 @@ class IndexView(View):
 
         # context = self.get_context()
         # context.update({"form": form})
-        u = request.POST.get('_id')
-        p = request.POST.get('pwd')
+        u = request.POST.get("_id")
+        p = request.POST.get("pwd")
         if User.objects.filter(username=u):
             user = authenticate(username=u, password=p)
             if user:
@@ -70,11 +70,12 @@ class IndexView(View):
                     login(request, user)
                 return render(request, self.login_page, locals())
             else:
-                tips = '帐号密码错误，请重新输入'
+                tips = "帐号密码错误，请重新输入"
         else:
-            tips = '用户不存在，请注册'
-                   
+            tips = "用户不存在，请注册"
+
         return render(request, self.template_name, locals())
+
 
 def logoutView(request):
     logout(request)
@@ -87,31 +88,71 @@ def downloadDocxView(request):
         student_id = request.POST.get("_id")
         reportDoc = ReportDocx(student_id)
         reportDoc.generate_docx()  # 生成docx文件
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-        response["Content-Disposition"] = f'attachment; filename={student_id}-report.docx'
+        response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        response["Content-Disposition"] = f"attachment; filename={student_id}-report.docx"
         reportDoc.document.save(response)
         return response
     else:
         return render(request, "main.html")
 
+
 def checkDocxView(request):
-    body = request.body.decode('utf-8')
+    body = request.body.decode("utf-8")
     res = json.loads(body)
     student_id = res["s_id"]
     reportDoc = ReportDocx(student_id)
     infos = reportDoc.hint_list
-    if infos:
-        response = '<p style="color: #FF5252;">以下项目查询出错，很可能是没在项目表中找到对应的项目</p>'
-        for i, info in enumerate(infos):
-            a = '<p style="color: #FF5252;">' + f'{i+1}. ' + info[0] + ': ' + info[1] + '</p>'
-            response += a
+    report = reportDoc.student_report
+    response = ""
+    if not report:
+        response += f'<p style="color: #FF5252;">学号{student_id}不存在！</p>'
         return HttpResponse(response)
     else:
-        return HttpResponse('<p>检查完成, 一切正常!</p>')
+        response = "<h2>基础信息</h2>"
+        base_info = """
+            <table id='base'>
+                <tr>
+                    <td>所在学院: %s</td><td>年级: %s</td><td>专业: %s</td>
+                </tr>
+                <tr>
+                    <td>学号: %s</td><td>姓名: %s</td><td>性别: %s</td>
+                </tr>
+            </table>
+            """ % tuple(
+            report["基础信息"]
+        )
+        response += base_info + "<h2>参与活动信息</h2>"
+        head = "<tr> <th>%s</th> <th>%s</th> <th>%s</th> <th>%s</th> <th>%s</th></tr>" % (
+            "序号",
+            "活动日期",
+            "活动名称",
+            "主办单位",
+            "认证状态",
+        )
+
+        for cate in report["参加活动经历"]:
+            prj_html = f"<h3>{cate}</h3>"
+            table = "<table class='content'>" + head
+            for prj in report["参加活动经历"][cate]:
+                row = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % tuple(prj)
+                table += row
+
+            table += "</table>"
+            prj_html += table
+            response += prj_html
+
+    if infos:
+        response += '<p style="color: #FF5252;">以下项目查询出错，很可能是没在项目表中找到对应的项目</p>'
+        for i, info in enumerate(infos):
+            a = '<p style="color: #FF5252;">' + f"{i+1}. " + info[0] + ": " + info[1] + "</p>"
+            response += a
+
+    return HttpResponse(response)
+
 
 # class DownloadDocxView(View):
 #     template = "main.html"
-    
+
 #     def get(self, request):
 #         return render(request, self.template)
 
@@ -125,4 +166,3 @@ def checkDocxView(request):
 #         response["Content-Disposition"] = f'attachment; filename={student_id}-report.docx'
 #         reportDoc.document.save(response)
 #         return response
-        

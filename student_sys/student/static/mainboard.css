@@ -1,0 +1,98 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 100px 1000px 1fr;
+    grid-template-rows: 80px auto;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px
+}
+
+.header {
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+    width: 100%;
+    background-color: PowderBlue;
+    opacity: 0.8;
+    border-radius: 2px;
+}
+
+.header>h1 {
+    text-align: center;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.sider {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    border-radius: 2px;
+    height: 600px;
+    padding: 1em;
+    background-color: PowderBlue;
+}
+
+.content {
+    grid-column: 3 / 4;
+    grid-row: 2 / 3;
+}
+
+table {
+    width: 90%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+table#base td {
+    border: 0px;
+    padding: 2px;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+table.content tr {
+    background-color: Snow;
+}
+
+table.content tr:nth-child(odd) {
+    background-color: MistyRose;
+}
+
+td {
+    border: 1px solid DimGray;
+    padding: 2px;
+    font-size: 0.8em;
+}
+
+th {
+    background-color: AntiqueWhite;
+    border: 1px solid DimGray;
+    padding: 2px;
+    font-size: 1em;
+}
+
+p {
+    font-size: 0.5em;
+}
+
+a {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 0.5em;
+    text-emphasis: none;
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    font-size: 0.5em;
+    color: #005051;
+}

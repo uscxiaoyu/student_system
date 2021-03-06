@@ -6,44 +6,48 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>主页</title>
     <script src="/static/axios.min.js"></script>
-    <link rel="stylesheet" href="/static/main.css">
+    <link rel="stylesheet" href="/static/mainboard.css">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">
-                <h2>欢迎您, {{ request.user }}! </h2>
-                <hr/>
-                <a href="/logout" style="font-size: 12; font-color: yellow">退出登录<a>
-            </div>
+            <h1> 第二课堂成绩单管理系统 </h1>
         </div>
+
+        <div class="sider">
+            <p> 欢迎您, {{ request.user }}! </p><br>
+            <a href="/logout" style="font-size: 12; font-color: yellow">退出登录</a>
+        </div>
+
         <div class="content">
-            <form action="/downloadDocx" method="post">
-                {% comment %} {% csrf_token %} {% endcomment %}
-                <p>
-                    <label for="_id">查询</label>
-                    <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()">
-                    <span class='alarm-info'></span>
-                </p>
-                <p>
-                    <button type="button" onclick="submitDATA()">检查文件</button>
-                    <span class="alarm-info"></span>
-                </p>
-                <p>
-                    <input type="submit" value="下载docx文件" />
-                </p>
-                <span class="alarm-info" id="res_info"></span>
-            </form>
+            <div class="search">
+                <form action="/downloadDocx" id="myForm" method="post">
+                    <p>
+                        <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()">
+                    </p>
+                </form>
+                <span>
+                    <button onclick="submitDATA()">查看</button>
+                </span>
+                <span class="display_info" id="buttons" style="display:none">
+                    <button onclick="printMe()">打印</button>
+                    <button onclick="formSubmit()">导出docx文件</button>
+                </span>
+            </div>
+            <div class="display_info" id="res_info"></div>
         </div>
     </div>
 </body>
 <script>
     var clearAlarm = function () {
-        var alert_spans = document.getElementsByClassName("alarm-info")
-        for (let sp of alert_spans) {
-            sp.innerHTML = "";
-            sp.style.display = "none";
+        var mask_tags = document.getElementsByClassName("display_info")
+        for (let mt of mask_tags) {
+            mt.style.display = "none";
         }
+    }
+
+    var formSubmit = function () {
+        document.getElementById("myForm").submit()
     }
 
     var submitDATA = function () {
@@ -53,10 +57,14 @@
             axios.post("/checkDocx", {s_id: student_id})
                 .then(function(res){
                     var resData = res.data;
-                    console.log(resData)
-                    var alert_span = document.getElementById("res_info");
-                    alert_span.style.display = "inline";
-                    alert_span.innerHTML = resData;
+                    var res_info = document.getElementById("res_info");
+                    var buttons = document.getElementById("buttons");
+
+                    res_info.style.display = "inline";
+                    res_info.innerHTML = resData;
+                    if (resData.indexOf("<table") >= 0){ // 如果查询到结果
+                        buttons.style.display = "inline";
+                    }
                 })
                 .catch(function(err){
                     console.log(err);
@@ -66,6 +74,11 @@
         }
     }
 
+    var printMe = function (){
+        var new_win = window.open();
+        new_win.document.write('<h1>上海对外经贸大学学生第二课堂经历证明</h1>' + document.getElementById('res_info').innerHTML);
+        new_win.print();
+    }
 </script>
 </html>
 
