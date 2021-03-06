@@ -5,8 +5,8 @@ body {
 
 .container {
     display: grid;
-    grid-template-columns: 1fr 1000px 1fr;
-    grid-template-rows: 100px auto 50px;
+    grid-template-columns: 1fr 900px 1fr;
+    grid-template-rows: 80px auto 50px;
     justify-content: center;
     grid-gap: 10px;
     border-radius: 2px;
@@ -23,6 +23,7 @@ body {
     width: 100%;
     background-color: #99ccff;
     opacity: 0.8;
+    border-radius: 2px;
 }
 
 .content {
@@ -30,6 +31,10 @@ body {
     grid-row: 2 / 3;
     min-height: 550px;
     position: relative;
+    border-radius: 2px;
+    background-image: url(/static/bg.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .footer {
@@ -37,21 +42,14 @@ body {
     grid-row: 3 / 4;
     background-color: #99ccff;
     opacity: 0.8;
+    border-radius: 2px;
 }
 
 .logo {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40%;
-    height: 100%;
-    border-radius: 10px;
-}
-
-.logo>h1 {
-    text-align: center;
-    font-size: 4em;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    width: 100%;
 }
 
 .sider {
@@ -68,10 +66,10 @@ body {
     background-color: #ece8e8;
     padding-top: 15px;
     position: absolute;
-    opacity: 0.8;
+    opacity: 0.9;
     width: 300px;
     top: 10%;
-    right: 10%;
+    right: 5%;
     border-radius: 10px;
     box-shadow: 0 0 0.5em rgba(93, 162, 248, 0.5);
     z-index: 999;
@@ -86,15 +84,15 @@ body {
 .fieldset-wrapper {
     padding: 1em;
     margin: 1em;
-    border: 1px solid #eeee;
+    border: 0.5px solid #eeee;
     border-radius: 5px;
     background-color: #888888;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
 }
 
 form p {
-    color: #292929;
-    font-weight: bold;
+    /* color: #292929; */
+    font-weight: normal;
     position: relative;
     display: block;
     width: 80%;
@@ -147,13 +145,18 @@ input[type=radio] {
 input[type=submit] {
     padding: 0.2em 0.2em 0.2em 0.2em;
     height: 2em;
-    background-color: #82a3ca;
-    border-radius: 5px;
+    font-size: 0.8em;
+    background-color: gainsboro;
+    border-radius: 2px;
 }
 
 button {
     padding: 0.4em 0.5em;
     border-radius: 5px;
+}
+
+h2 {
+    font-size: 1.5em;
 }
 
 a {

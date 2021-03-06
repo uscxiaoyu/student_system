@@ -11,27 +11,23 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1> 第二课堂成绩单管理系统 </h1>
+            <h1> 上海对外经贸大学第二课堂成绩系统 </h1>
+            <span id="menu">
+                <p> 欢迎您, {{ request.user }}! </p>
+                <a href="/logout" style="font-size: 12; font-color: yellow">退出登录</a>
+            <span>
         </div>
-
-        <div class="sider">
-            <p> 欢迎您, {{ request.user }}! </p><br>
-            <a href="/logout" style="font-size: 12; font-color: yellow">退出登录</a>
-        </div>
-
         <div class="content">
             <div class="search">
                 <form action="/downloadDocx" id="myForm" method="post">
-                    <p>
-                        <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()">
-                    </p>
+                    <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()"/>
                 </form>
                 <span>
                     <button onclick="submitDATA()">查看</button>
                 </span>
                 <span class="display_info" id="buttons" style="display:none">
                     <button onclick="printMe()">打印</button>
-                    <button onclick="formSubmit()">导出docx文件</button>
+                    <button onclick="formSubmit()">导出文件</button>
                 </span>
             </div>
             <div class="display_info" id="res_info"></div>
@@ -75,9 +71,10 @@
     }
 
     var printMe = function (){
-        var new_win = window.open();
-        new_win.document.write('<h1>上海对外经贸大学学生第二课堂经历证明</h1>' + document.getElementById('res_info').innerHTML);
-        new_win.print();
+        var oldBody = document.body.innerHTML;
+        document.body.innerHTML = "<h1>上海对外经贸大学学生第二课堂经历证明</h1>" + document.getElementById('res_info').innerHTML;
+        window.print();
+        document.body.innerHTML = oldBody // 恢复
     }
 </script>
 </html>

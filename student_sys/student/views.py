@@ -105,10 +105,10 @@ def checkDocxView(request):
     report = reportDoc.student_report
     response = ""
     if not report:
-        response += f'<p style="color: #FF5252;">学号{student_id}不存在！</p>'
+        response += f"<p>学号{student_id}不存在！</p>"
         return HttpResponse(response)
     else:
-        response = "<h2>基础信息</h2>"
+        response = ""
         base_info = """
             <table id='base'>
                 <tr>
@@ -121,7 +121,7 @@ def checkDocxView(request):
             """ % tuple(
             report["基础信息"]
         )
-        response += base_info + "<h2>参与活动信息</h2>"
+        response += base_info
         head = "<tr> <th>%s</th> <th>%s</th> <th>%s</th> <th>%s</th> <th>%s</th></tr>" % (
             "序号",
             "活动日期",
@@ -142,9 +142,9 @@ def checkDocxView(request):
             response += prj_html
 
     if infos:
-        response += '<p style="color: #FF5252;">以下项目查询出错，很可能是没在项目表中找到对应的项目</p>'
+        response += "<p>以下项目查询出错，很可能是没在项目表中找到对应的项目</p>"
         for i, info in enumerate(infos):
-            a = '<p style="color: #FF5252;">' + f"{i+1}. " + info[0] + ": " + info[1] + "</p>"
+            a = "<p>" + f"{i+1}. " + info[0] + ": " + info[1] + "</p>"
             response += a
 
     return HttpResponse(response)
