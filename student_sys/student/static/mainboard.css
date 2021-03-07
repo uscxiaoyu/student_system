@@ -6,7 +6,7 @@ body {
 .container {
     display: grid;
     grid-template-columns: 1fr 900px 1fr;
-    grid-template-rows: 80px auto;
+    grid-template-rows: 60px auto;
     grid-column-gap: 10px;
     grid-row-gap: 10px
 }
@@ -43,17 +43,27 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-start;
+    padding-top: 0.5em;
     /* padding: 1em; */
     /* background-color: LightCyan; */
     border-radius: 2px;
 }
 
-.search {
+.search,
+.nav {
     margin-bottom: 2em;
+    padding: 0.5em;
+    border-style: outset;
+    background-color: #99ccff;
+    border-radius: 5px;
+    opacity: 0.8;
 }
 
 #res_info {
-    padding: 2px;
+    padding: 10px;
+    border-radius: 2px;
+    /* border-style: ridge dotted ridge; */
+    /* border-color: lightgray; */
 }
 
 #menu {
@@ -93,6 +103,10 @@ table.content tr:nth-child(odd) {
     background-color: MistyRose;
 }
 
+table.content tr:hover {
+    background-color: #99ccff;
+}
+
 td {
     border: 1px solid DimGray;
     padding: 5px;
@@ -106,6 +120,16 @@ th {
     padding: 2px;
     font-family: KaiTi 'Courier New';
     font-size: 1em;
+}
+
+input {
+    margin: 5px;
+    background-color: aliceblue;
+}
+
+input:focus,
+textarea:focus {
+    background-color: #9fe4eb;
 }
 
 h2 {
@@ -125,8 +149,12 @@ p {
     font-size: 0.5em;
 }
 
+#menu p {
+    font-family: HeiTi, Calibri;
+}
+
 a {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: HeiTi, Calibri;
     font-size: 0.5em;
     text-emphasis: none;
     text-decoration: none;
@@ -135,5 +163,6 @@ a {
 
 a:hover {
     font-size: 0.5em;
+    font-weight: bold;
     color: brown;
 }

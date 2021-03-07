@@ -2,7 +2,7 @@ from re import template
 from django.contrib import auth
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User, Permission, Group
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
@@ -40,7 +40,8 @@ import json
 
 class IndexView(View):
     template_name = "index.html"
-    login_page = "main.html"
+    teacher_main_page = "teacher_main.html"
+    student_main_page = "student_main.html"
 
     def get_context(self):
         students = Student.get_all()[:100]
@@ -54,27 +55,41 @@ class IndexView(View):
         return render(request, self.template_name, context=context)
 
     def post(self, request):
-        # form = StudentForm()
-        # if form.is_valid():
-        #     form.save()
-        #     return HttpResponseRedirect(reverse("index"))
-
-        # context = self.get_context()
-        # context.update({"form": form})
-        u = request.POST.get("_id")
+        u = request.POST.get("_id")  # 学号或者教工号
         p = request.POST.get("pwd")
         if User.objects.filter(username=u):
+            u_id = User.objects.get(username=u).id
+            u_group = Group.objects.get(user=u_id).name
             user = authenticate(username=u, password=p)
             if user:
                 if user.is_active:
                     login(request, user)
-                return render(request, self.login_page, locals())
+                    if u_group == "教师":
+                        return render(request, self.teacher_main_page, {"request": request, "user": u})
+                    else:
+                        reportDoc = ReportDocx(u)
+                        infos = reportDoc.hint_list  # 错误提示
+                        report = reportDoc.student_report  # 学生信息
+                        print(request, report["参加活动经历"])
+                        return render(
+                            request,
+                            self.student_main_page,
+                            {
+                                "request": request,
+                                "user": u,
+                                "infos": infos,
+                                "meta_info": report["基础信息"],
+                                "activities": report["参加活动经历"],
+                            },
+                        )
+                else:
+                    self.tips = "账号未激活，请联系管理员"
             else:
-                tips = "帐号密码错误，请重新输入"
+                self.tips = "帐号密码错误，请重新输入"
         else:
-            tips = "用户不存在，请注册"
+            self.tips = "用户不存在，请注册"
 
-        return render(request, self.template_name, locals())
+        return render(request, self.template_name, {"request": request, "user": u})
 
 
 def logoutView(request):

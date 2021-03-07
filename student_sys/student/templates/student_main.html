@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>主页</title>
+    <script src="/static/axios.min.js"></script>
+    <link rel="stylesheet" href="/static/mainboard.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> 上海对外经贸大学第二课堂成绩系统 </h1>
+            <span id="menu">
+                <p> 欢迎您, <i>{{ request.user }}</i>! </p>
+                <a href="/logout">退出登录</a>
+            <span>
+        </div>
+        <div class="content">
+            <div class="nav">
+                <span>
+                    <a href='#base_info'>基础信息</a><br>
+                    <a href='#exp_1'>第二课堂经历</a><br>
+                    <a href='#exp_2'>学生组织经历</a><br>
+                    <a href='#exp_3'>所获奖励</a><br>
+                    <a onclick="">预览</a>
+                <span>
+            </div>
+            <div class="display">
+                <div class="display_info" id="base_info">
+                    <table>
+                        <tr>
+                            <th>学院</th>
+                            <th>年级</th>
+                            <th>专业</th>
+                            <th>学号</th>
+                            <th>姓名</th>
+                            <th>性别</th>
+                        </tr>
+                        <tr>
+                            {% for v in meta_info %}
+                                <td>{{ v }}</td>
+                            {% endfor %}
+                        </tr>
+                    </table>
+                </div>
+
+                {% if infos %}
+                    <div>
+                        <h3>你参与的以下项目存在问题</h3>
+                        <table>
+                            <tr><th>序号</th><th>项目名称</th><th>错误提示</th></tr>
+                            {% for prj, err in infos %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ prj }}</td>
+                                    <td>{{ err }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                {% endif %}
+                
+                <div class="display_info" id="exp_1">
+                    {% if activities %}
+                        <h2>参加活动经历</h2>
+                        {% for k, vs_list in activities.items %}
+                            <h3>{{ k }}</h3>
+                            <table>
+                                <tr>
+                                    <th>序号</th><th>活动时间</th><th>活动名称</th><th>主办单位</th><th>认证状态</th>
+                                </tr>
+                                {% for vs in vs_list %}
+                                    <tr>
+                                        {% for v in vs %}
+                                            <td>{{ v }} </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endfor %}
+                    {% else %}
+                        <p>无参加活动经历！</p>
+                    {% endif %}
+                </div>
+                <div class="display_info" id="exp_2">
+                    <h2>学生组织经历</h2>
+                    <table>
+                        <tr>
+                            <th>序号</th><th>开始时间</th><th>结束时间</th><th>活动名称</th><th>单位</th><th>认证状态</th>
+                        </tr>
+                    <table>
+                    <form action="/" post="">
+                        <input type="month" name="start_time" value="" placeholder="开始时间"/>
+                        <input type="month" name="end_time" value="" placeholder="结束时间"/>
+                        <input type="text" name="prj_name" value="" placeholder="活动名称">
+                        <input type="text" name="prj_name" value="" placeholder="单位">
+                        <input type="submit" value="新增">
+                    </form>
+                </div>
+                <div class="display_info" id="exp_3">
+                    <h2>获奖经历</h2>
+                    <table>
+                        <tr>
+                            <th>序号</th><th>获奖时间</th><th>奖励名称</th><th>颁奖单位</th><th>认证状态</th>
+                        </tr>
+                    <table>
+                    <form action="/" post="">
+                        <input type="month" name="start_time" value="" placeholder="获奖时间"/>
+                        <input type="text" name="prj_name" value="" placeholder="活动名称">
+                        <input type="text" name="prj_name" value="" placeholder="颁奖单位">
+                        <input type="submit" value="新增">
+                    </form>
+                </div>
+        </div>
+    </div>
+</body>
+<script>
+    var clearAlarm = function () {
+        var mask_tags = document.getElementsByClassName("display_info")
+        for (let mt of mask_tags) {
+            mt.style.display = "none";
+        }
+    }
+
+    var formSubmit = function () {
+        document.getElementById("myForm").submit()
+    }
+
+    var submitDATA = function () {
+        var student_id = document.getElementById("_id").value
+        console.log(student_id)
+        if (student_id) {
+            axios.post("/checkDocx", {s_id: student_id})
+                .then(function(res){
+                    var resData = res.data;
+                    var res_info = document.getElementById("res_info");
+                    var buttons = document.getElementById("buttons");
+
+                    res_info.style.display = "inline";
+                    res_info.innerHTML = resData;
+                    if (resData.indexOf("<table") >= 0){ // 如果查询到结果
+                        buttons.style.display = "inline";
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                })
+        } else {
+            console.log("帐号为空!")
+        }
+    }
+
+    var printMe = function (){
+        var oldBody = document.body.innerHTML;
+        document.body.innerHTML = "<h1>上海对外经贸大学学生第二课堂经历证明</h1>" + document.getElementById('res_info').innerHTML;
+        window.print();
+        document.body.innerHTML = oldBody // 恢复
+    }
+</script>
+</html>
+
+ {% comment %} onclick="submitDATA()" {% endcomment %}
