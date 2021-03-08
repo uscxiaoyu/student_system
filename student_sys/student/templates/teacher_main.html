@@ -19,15 +19,15 @@
         </div>
         <div class="content">
             <div class="search">
-                <form action="/downloadDocx" id="myForm" method="post">
+                <span>
                     <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()"/>
-                </form>
+                </span><br>
                 <span>
                     <button onclick="submitDATA()">查看</button>
                 </span>
                 <span class="display_info" id="buttons" style="display:none">
                     <button onclick="printMe()">打印</button>
-                    <button onclick="formSubmit()">导出文件</button>
+                    <button onclick="formSubmit()">导出</button>
                 </span>
             </div>
             <div class="display_info" id="res_info"></div>
