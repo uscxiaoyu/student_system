@@ -5,7 +5,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Permission, Group
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
-from django.utils.decorators import method_decorator
 from django.urls import reverse
 from django.views import View
 from .models import Student, Project, StudentJoinProject
@@ -42,17 +41,8 @@ class IndexView(View):
     template_name = "index.html"
     teacher_main_page = "teacher_main.html"
     student_main_page = "student_main.html"
-
-    def get_context(self):
-        students = Student.get_all()[:100]
-        context = {"students": students}
-        return context
-
     def get(self, request):
-        form = StudentForm()
-        context = self.get_context()
-        context.update({"form": form})
-        return render(request, self.template_name, context=context)
+        return render(request, self.template_name)
 
     def post(self, request):
         u = request.POST.get("_id")  # 学号或者教工号
@@ -163,21 +153,3 @@ def checkDocxView(request):
             response += a
 
     return HttpResponse(response)
-
-
-# class DownloadDocxView(View):
-#     template = "main.html"
-
-#     def get(self, request):
-#         return render(request, self.template)
-
-#     def post(self, request):
-#         # body = request.body.decode('utf-8')
-#         # res = json.loads(body)
-#         # student_id = res["s_id"]
-#         student_id = request.POST.get("_id")
-#         reportDoc = ReportDocx(student_id)
-#         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-#         response["Content-Disposition"] = f'attachment; filename={student_id}-report.docx'
-#         reportDoc.document.save(response)
-#         return response

@@ -45,16 +45,16 @@
         <div class="content">
             <div class="login">
                 <form action="" method="post">
-                    <p>
-                        {% comment %} <label for="_id">账号</label> {% endcomment %}
-                        <input type="text" name="_id" id="_id" placeholder="输入账号" onfocus="clearAlarm()">
-                        <span class='alarm-info'></span>
-                    </p>
-                    <p>
-                        {% comment %} <label for="pwd">密码</label> {% endcomment %}
-                        <input type="password" name="pwd" id="pwd" placeholder="输入密码" onfocus="clearAlarm()"> 
-                        <span class='alarm-info'></span>
-                    </p>
+                    
+                    {% comment %} <label for="_id">账号</label> {% endcomment %}
+                    <input type="text" name="_id" id="_id" placeholder="输入账号" onfocus="clearAlarm()"><br>
+                    <span class='alarm-info'></span>
+                
+                
+                    {% comment %} <label for="pwd">密码</label> {% endcomment %}
+                    <input type="password" name="pwd" id="pwd" placeholder="输入密码" onfocus="clearAlarm()"><br> 
+                    <span class='alarm-info'></span>
+                    
                     {% comment %} <p>
                         <span style="font-size: 0.9em; font-weight: lighter">
                             <input type="radio" name="role" id="role" value="学生" checked="checked">学生
@@ -68,9 +68,9 @@
                         <button type="reset" style="margin-left: 2em" onclick="clearAlarm()">重置</button>
                         <span class="alarm-info"></span>
                     </p> {% endcomment %}
-                    <p>
-                        <input type="submit" value="登录" />
-                    </p>
+                   
+                    <input type="submit" id="subm" value="登录" />
+                    
                     {% comment %} <p>
                         <a href="signUp.html">注册</a>
                         <a href="findPwd.html">密码找回</a>
@@ -79,7 +79,7 @@
             </div>
         </div>
         <div class="footer">
-            <p style="text-align: center"> <a href="/admin">后台管理</a></p>
+            <p> <a href="/admin">后台管理</a> | <a href="http://www.suibe.edu.cn/">学校主页</a> | 版权所有©2021 肖宇</p>
         </div>
     </div>
 </body>

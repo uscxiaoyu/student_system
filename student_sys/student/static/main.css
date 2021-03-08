@@ -5,7 +5,7 @@ body {
 
 .container {
     display: grid;
-    grid-template-columns: 1fr 900px 1fr;
+    grid-template-columns: 1fr 1000px 1fr;
     grid-template-rows: 60px auto 30px;
     justify-content: center;
     grid-gap: 10px;
@@ -29,7 +29,7 @@ body {
 .content {
     grid-column: 2 / 3;
     grid-row: 2 / 3;
-    min-height: 550px;
+    min-height: 650px;
     position: relative;
     border-radius: 2px;
     background-image: url(/static/bg.jpg);
@@ -43,6 +43,13 @@ body {
     background-color: #99ccff;
     opacity: 0.8;
     border-radius: 2px;
+}
+
+.footer p {
+    text-align: center;
+    font-size: small;
+    position: relative;
+    bottom: 5px;
 }
 
 .logo {
@@ -64,13 +71,13 @@ body {
 
 .login {
     background-color: #ece8e8;
-    padding-top: 15px;
+    padding: 15px;
     position: absolute;
     opacity: 0.9;
     width: 240px;
     top: 10%;
     right: 10%;
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: 0 0 0.5em rgba(93, 162, 248, 0.5);
     z-index: 999;
 }
@@ -88,15 +95,6 @@ body {
     border-radius: 5px;
     background-color: #888888;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
-}
-
-form p {
-    /* color: #292929; */
-    font-weight: normal;
-    position: relative;
-    display: block;
-    width: 80%;
-    left: 10%
 }
 
 label {
@@ -121,8 +119,30 @@ legend {
 
 input {
     background-color: #ffffff;
+    font-family: SimSun, 'Times New Roman', Times, serif;
+    font-size: small;
+    border: 1px solid grey;
     height: 1.5em;
-    max-width: 30em;
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 12em;
+}
+
+input#subm {
+    font-family: SimSun, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 0.8em;
+    background-color: gainsboro;
+    border: 1px solid grey;
+    border-radius: 4px;
+    width: 3em;
+    height: 2em;
+    padding: 0.2em 0.2em 0.2em 0.2em;
+    margin-bottom: 0.5em;
+}
+
+input#subm:hover {
+    background-color: ivory;
 }
 
 textarea {
@@ -142,14 +162,6 @@ input[type=radio] {
     top: 4px
 }
 
-input[type=submit] {
-    padding: 0.2em 0.2em 0.2em 0.2em;
-    height: 2em;
-    font-size: 0.8em;
-    background-color: gainsboro;
-    border-radius: 2px;
-}
-
 button {
     padding: 0.4em 0.5em;
     border-radius: 5px;
@@ -161,7 +173,7 @@ h2 {
 
 a {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 1em;
+    font-size: small;
     text-emphasis: none;
     text-decoration: none;
     color: black;
