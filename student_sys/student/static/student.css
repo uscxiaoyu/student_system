@@ -1,0 +1,112 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 150px 850px 1fr;
+    grid-template-rows: 60px minmax(600px);
+    grid-row-gap: 10px;
+    grid-template-areas: ". header header ." ". sider content .";
+}
+
+.header {
+    grid-area: header;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+    border-radius: 2px;
+    background-color: #91d5ff;
+    opacity: 0.8;
+}
+
+#menu {
+    position: absolute;
+    right: 20px;
+}
+
+.nav {
+    grid-area: sider;
+    background-color: #ffffff;
+    opacity: 0.8;
+}
+
+.content {
+    grid-area: content;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-top: 0.5em;
+    padding: 1em;
+    background-color: #ffffff;
+    border-radius: 2px;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.2em;
+    margin: 1em 0.5em 0.5em 0em;
+    color: #871400;
+}
+
+p {
+    font-size: 0.5em;
+}
+
+ul {
+    /* background-color: grey; */
+    color: white;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    text-align: right;
+    font-size: medium;
+}
+
+li a {
+    display: block;
+    /* background-color: #b5f5ec; */
+    padding: 10px 20px;
+    color: black;
+    text-decoration: none;
+}
+
+li a.active {
+    background-color: #4CAF50;
+}
+
+li a:hover:not(.active) {
+    background-color: #555;
+    color: white
+}
+
+thead th {
+    font-family: SimHei;
+    font-weight: bold;
+    font-size: 120%;
+    color: black
+}
+
+.layui-input-block {
+    margin-left: 20px;
+    margin-top: 20px
+}
+
+.layui-input,
+.layui-textarea {
+    width: auto;
+}

@@ -6,3 +6,4 @@
 *.ini
 *.DS_Store
 **/__pycache__/*
+/student_sys/static/*

@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>主页</title>
     <script src="/static/axios.min.js"></script>
-    <link rel="stylesheet" href="/static/mainboard.css">
+    <script src="/static/layui/layui.all.js"></script>
+    <link rel="stylesheet", href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/student.css">
 </head>
 <body>
     <div class="container">
@@ -17,19 +19,20 @@
                 <a href="/logout">退出登录</a>
             <span>
         </div>
+        <div class="nav">
+            <ul>
+                <li><a href="#base_info">个人信息</a></li>
+                <li><a href="#exp_1">第二课堂经历</a></li>
+                <li><a href="#exp_2">学生组织经历</a></li>
+                <li><a href="#exp_3">所获奖励</a></li>
+            </ul>
+        </div>
         <div class="content">
-            <div class="nav">
-                <span>
-                    <a href='#base_info'>基础信息</a><br>
-                    <a href='#exp_1'>第二课堂经历</a><br>
-                    <a href='#exp_2'>学生组织经历</a><br>
-                    <a href='#exp_3'>所获奖励</a><br>
-                    <a onclick="">预览</a>
-                <span>
-            </div>
             <div class="display">
-                <div class="display_info" id="base_info">
-                    <table>
+                <div class="item" id="base_info">
+                    <h3>个人信息</h3>
+                    <table class="layui-table" lay-skin="nob">
+                        <thead>
                         <tr>
                             <th>学院</th>
                             <th>年级</th>
@@ -38,6 +41,7 @@
                             <th>姓名</th>
                             <th>性别</th>
                         </tr>
+                        </thead>
                         <tr>
                             {% for v in meta_info %}
                                 <td>{{ v }}</td>
@@ -47,30 +51,35 @@
                 </div>
 
                 {% if infos %}
-                    <div>
-                        <h3>你参与的以下项目存在问题</h3>
-                        <table>
+                <div class="item">
+                    <h3>存在问题的项目</h3>
+                    <table lay-even class="layui-table" lay-skin="line">
+                        <thead>
                             <tr><th>序号</th><th>项目名称</th><th>错误提示</th></tr>
-                            {% for prj, err in infos %}
-                                <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{ prj }}</td>
-                                    <td>{{ err }}</td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    </div>
+                        </thead>
+                        <tbody>
+                        {% for prj, err in infos %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ prj }}</td>
+                                <td>{{ err }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 {% endif %}
                 
-                <div class="display_info" id="exp_1">
+                <div class="item" id="exp_1">
                     {% if activities %}
-                        <h2>参加活动经历</h2>
                         {% for k, vs_list in activities.items %}
                             <h3>{{ k }}</h3>
-                            <table>
+                            <table lay-even class="layui-table" lay-skin="line">
+                                <thead>
                                 <tr>
                                     <th>序号</th><th>活动时间</th><th>活动名称</th><th>主办单位</th><th>认证状态</th>
                                 </tr>
+                                </thead>
                                 {% for vs in vs_list %}
                                     <tr>
                                         {% for v in vs %}
@@ -84,40 +93,37 @@
                         <p>无参加活动经历！</p>
                     {% endif %}
                 </div>
-                <div class="display_info" id="exp_2">
-                    <h2>学生组织经历</h2>
-                    <table>
+                <div class="item" id="exp_2">
+                    <h3>学生组织经历</h3>
+                    <table class="layui-table" lay-skin="line">
+                        <thead>
                         <tr>
                             <th>序号</th><th>开始时间</th><th>结束时间</th><th>活动名称</th><th>单位</th><th>认证状态</th>
                         </tr>
-                    <table>
-                    <p>操作数据</p>
-                    <form action="/" post="">
-                        <input type="month" name="start_time" value="" placeholder="开始时间"/>
-                        <input type="month" name="end_time" value="" placeholder="结束时间"/>
-                        <input type="text" name="prj_name" value="" placeholder="活动名称">
-                        <input type="text" name="prj_name" value="" placeholder="单位">
-                        <input type="submit" value="新增">
-                    </form>
+                        </thead>
+                    </table>
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="open_layer1()">
+                        <i class="layui-icon">&#xe654;</i>
+                    </button>
+                    
                 </div>
-                <div class="display_info" id="exp_3">
-                    <h2>获奖经历</h2>
-                    <table>
+                <div class="item" id="exp_3">
+                    <h3>获奖经历</h3>
+                    <table lay-even class="layui-table" >
+                        <thead>
                         <tr>
                             <th>序号</th><th>获奖时间</th><th>奖励名称</th><th>颁奖单位</th><th>认证状态</th>
                         </tr>
-                    <table>
-                    <p>操作数据</p>
-                    <form action="/" post="">
-                        <input type="month" name="start_time" value="" placeholder="获奖时间"/>
-                        <input type="text" name="prj_name" value="" placeholder="活动名称">
-                        <input type="text" name="prj_name" value="" placeholder="颁奖单位">
-                        <input type="submit" value="新增">
-                    </form>
+                        </thead>
+                    </table>
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="open_layer2()">
+                        <i class="layui-icon">&#xe654;</i>
+                    </button>
                 </div>
         </div>
     </div>
 </body>
+
 <script>
     var clearAlarm = function () {
         var mask_tags = document.getElementsByClassName("display_info")
@@ -161,6 +167,94 @@
         document.body.innerHTML = oldBody // 恢复
     }
 </script>
-</html>
+<script>
+    var open_layer1 = function () {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: "<p style='text-align:center;font-size:1.5em; font-weight:bold'>学生组织记录</p>",
+                area: ["400px", "450px"],
+                content: `<form id="add1" action="/" post="" class="layui-form">
+                                <div class="layui-input-block">
+                                    <label class="layui-form-label">开始时间</label>
+                                    <div class="layui-input-block">
+                                        <input type="month" lay-verify="required" name="start_time" class="layui-input"/>
+                                    </div>
+                                </div>
+                                <div class="layui-input-block">
+                                    <label class="layui-form-label">结束时间</label>
+                                    <div class="layui-input-block">
+                                        <input type="month" name="end_time" class="layui-input" placeholder="结束时间"/>
+                                    </div>
+                                </div>
+                                <div class="layui-input-block">
+                                    <label class="layui-form-label">组织名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="org_name" class="layui-input" placeholder="组织名称">
+                                    </div>
+                                </div>
+                                <div class="layui-input-block">
+                                    <label class="layui-form-label">职位</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="position" class="layui-input" placeholder="职位">
+                                    </div>
+                                </div>
+                                <div class="layui-input-block">
+                                    <label class="layui-form-label">单位</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="dept_name" class="layui-input" placeholder="隶属部门">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button class="layui-btn-primary layui-btn-sm" lay-submit lay-filter="formDemo">提交</button>
+                                        <button type="reset" class="layui-btn-primary layui-btn-sm layui-btn-primary">重置</button>
+                                    </div>
+                                </div>
+                        </form>`
+            }
 
- {% comment %} onclick="submitDATA()" {% endcomment %}
+            );
+        })
+    };
+    var open_layer2 = function () {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: "<p style='text-align:center; font-size:1.5em; font-weight:bold'>奖励记录</p>",
+                area: ["400px", "300px"],
+                content: `<form id="add2" action="/" post="" class="layui-form">
+                                <div class="layui-input-block">
+                                    <label class="layui-form-label">奖励时间</label>
+                                    <div class="layui-input-block">
+                                        <input type="month" lay-verify="required" name="start_time" class="layui-input"/>
+                                    </div>
+                                </div>
+                                <div class="layui-input-block">
+                                    <label class="layui-form-label">奖励名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="scholar_name" class="layui-input" placeholder="奖励名称">
+                                    </div>
+                                </div>
+                                <div class="layui-input-block">
+                                    <label class="layui-form-label">奖励级别</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="level" class="layui-input" placeholder="奖励级别">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button class="layui-btn-primary layui-btn-sm" lay-submit lay-filter="formDemo">提交</button>
+                                        <button type="reset" class="layui-btn-primary layui-btn-sm layui-btn-primary">重置</button>
+                                    </div>
+                                </div>
+                            </form>`
+            }
+
+            );
+        })
+    };  
+</script>
+</html>

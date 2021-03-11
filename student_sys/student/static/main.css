@@ -121,7 +121,7 @@ legend {
 
 input {
     background-color: #ffffff;
-    font-family: SimSun, 'Times New Roman', Times, serif;
+    font-family: 'Times New Roman', Times, serif;
     font-size: small;
     border: 1px solid grey;
     height: 1.5em;
@@ -131,7 +131,7 @@ input {
 }
 
 input#subm {
-    font-family: SimSun, 'Times New Roman', Times, serif;
+    font-family: 'Times New Roman', Times, serif;
     font-weight: bold;
     font-size: 0.8em;
     background-color: gainsboro;

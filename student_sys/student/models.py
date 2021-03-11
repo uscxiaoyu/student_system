@@ -83,3 +83,42 @@ class StudentJoinProject(models.Model):
 
     class Meta:
         verbose_name = verbose_name_plural = "学生参与活动信息"
+
+
+# 学生组织活动经历
+class StudentOrgnization(models.Model):
+    s_id = models.CharField(max_length=64, verbose_name="学号")
+    org_name = models.CharField(max_length=128, verbose_name="组织名称")
+    position = models.CharField(max_length=64, verbose_name="职务")
+    start_time = models.DateField(verbose_name="开始日期")
+    end_time = models.DateField(verbose_name="结束日期")
+    department_name = models.CharField(max_length=128, verbose_name="部门名称")
+    certify_state = models.CharField(max_length=64, verbose_name="认证状态", default=None, blank=True)
+    
+    def __str__(self) -> str:
+        return "<student_id: {}, org_name: {}, position: {}>".format(self.s_id, self.org_name, self.position)
+
+    @classmethod
+    def get_all(cls):
+        return cls.objects.all()
+
+    class Meta:
+        verbose_name = verbose_name_plural = "学生组织活动信息"
+        
+
+# 学生奖励
+class StudentScholar(models.Model):
+    s_id = models.CharField(max_length=64, verbose_name="学号")
+    g_time = models.DateField(verbose_name="获奖时间")
+    scholar_name = models.CharField(max_length=64, verbose_name="奖学金名称")
+    level = models.CharField(max_length=64, verbose_name="奖学金级别")
+    certify_state = models.CharField(max_length=64, verbose_name="认证状态", default=None, blank=True)
+    def __str__(self) -> str:
+        return "<student_id: {}, scholar_name: {}, level: {}>".format(self.s_id, self.scholar_name, self.level)
+
+    @classmethod
+    def get_all(cls):
+        return cls.objects.all()
+
+    class Meta:
+        verbose_name = verbose_name_plural = "学生获奖信息"

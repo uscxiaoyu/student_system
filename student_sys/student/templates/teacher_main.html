@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>主页</title>
     <script src="/static/axios.min.js"></script>
+    {% comment %} <script src="../static/layui/layui.all.js"></script>
+    <link rel="stylesheet", href="../static/layui/css/layui.css"> {% endcomment %}
     <link rel="stylesheet" href="/static/mainboard.css">
 </head>
 <body>
@@ -19,9 +21,11 @@
         </div>
         <div class="content">
             <div class="search">
-                <span>
-                    <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()"/>
-                </span><br>
+                <form id="myForm" method="post">
+                    <span>
+                        <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()"/>
+                    </span><br>
+                </form>
                 <span>
                     <button onclick="submitDATA()">查看</button>
                 </span>
@@ -31,6 +35,7 @@
                 </span>
             </div>
             <div class="display_info" id="res_info"></div>
+            {% comment %} <div><table id="demo" lay-filter="test"></table></div> {% endcomment %}
         </div>
     </div>
 </body>
@@ -77,6 +82,30 @@
         document.body.innerHTML = oldBody // 恢复
     }
 </script>
+{% comment %} <script>
+    layui.use('table', function(){
+    var table = layui.table;
+    //第一个实例
+    table.render({
+        elem: '#demo'
+        ,height: 312
+        ,url: 'https://www.layui.com/demo/table/user/' //数据接口
+        ,page: true //开启分页
+        ,cols: [[ //表头
+        {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+        ,{field: 'username', title: '用户名', width:80}
+        ,{field: 'sex', title: '性别', width:80, sort: true}
+        ,{field: 'city', title: '城市', width:80} 
+        ,{field: 'sign', title: '签名', width: 177}
+        ,{field: 'experience', title: '积分', width: 80, sort: true}
+        ,{field: 'score', title: '评分', width: 80, sort: true}
+        ,{field: 'classify', title: '职业', width: 80}
+        ,{field: 'wealth', title: '财富', width: 135, sort: true}
+        ]]
+    });
+    
+    });
+</script> {% endcomment %}
 </html>
 
  {% comment %} onclick="submitDATA()" {% endcomment %}
