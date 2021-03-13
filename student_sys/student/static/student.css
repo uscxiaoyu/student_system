@@ -110,3 +110,7 @@ thead th {
 .layui-textarea {
     width: auto;
 }
+
+.layui-table>tbody tr:hover {
+    background-color: #ffc069;
+}

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>主页</title>
+    <title>学生工作页面</title>
     <script src="/static/axios.min.js"></script>
     <script src="/static/layui/layui.all.js"></script>
     <link rel="stylesheet", href="/static/layui/css/layui.css">
@@ -95,13 +95,51 @@
                 </div>
                 <div class="item" id="exp_2">
                     <h3>学生组织经历</h3>
-                    <table class="layui-table" lay-skin="line">
+                    <table class="layui-table" lay-skin="line" id="studentOrgTB">
                         <thead>
-                        <tr>
-                            <th>序号</th><th>开始时间</th><th>结束时间</th><th>活动名称</th><th>单位</th><th>认证状态</th>
-                        </tr>
+                            <tr>
+                                <th>序号</th><th>开始时间</th><th>结束时间</th><th>活动名称</th><th>单位</th><th>认证状态</th>
+                            </tr>
                         </thead>
                     </table>
+                    <form id="add1"  method="post" class="layui-form">
+                        <div class="layui-input-block">
+                            <label class="layui-form-label">开始时间</label>
+                            <div class="layui-input-block">
+                                <input type="date" lay-verify="required" id="start_time" name="start_time" class="layui-input"/>
+                            </div>
+                        </div>
+                        <div class="layui-input-block">
+                            <label class="layui-form-label">结束时间</label>
+                            <div class="layui-input-block">
+                                <input type="date" lay-verify="required" id="end_time" name="end_time" class="layui-input"/>
+                            </div>
+                        </div>
+                        <div class="layui-input-block">
+                            <label class="layui-form-label">组织名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" lay-verify="required" id="org_name" name="org_name" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-input-block">
+                            <label class="layui-form-label">职位</label>
+                            <div class="layui-input-block">
+                                <input type="text" lay-verify="required" id="position" name="position" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-input-block">
+                            <label class="layui-form-label">隶属部门</label>
+                            <div class="layui-input-block">
+                                <input type="text" lay-verify="required" id=dept_name name="dept_name" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn-primary layui-btn-sm" onclick="submitOrgData()">提交</button>
+                                <button type="reset" class="layui-btn-primary layui-btn-sm layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
                     <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="open_layer1()">
                         <i class="layui-icon">&#xe654;</i>
                     </button>
@@ -109,11 +147,11 @@
                 </div>
                 <div class="item" id="exp_3">
                     <h3>获奖经历</h3>
-                    <table lay-even class="layui-table" >
+                    <table lay-even class="layui-table" id="studentScholarTB">
                         <thead>
-                        <tr>
-                            <th>序号</th><th>获奖时间</th><th>奖励名称</th><th>颁奖单位</th><th>认证状态</th>
-                        </tr>
+                            <tr>
+                                <th>序号</th><th>获奖时间</th><th>奖励名称</th><th>颁奖单位</th><th>认证状态</th>
+                            </tr>
                         </thead>
                     </table>
                     <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="open_layer2()">
@@ -125,49 +163,47 @@
 </body>
 
 <script>
-    var clearAlarm = function () {
-        var mask_tags = document.getElementsByClassName("display_info")
-        for (let mt of mask_tags) {
-            mt.style.display = "none";
-        }
-    }
+    var submitOrgData = function () {
+        var post_data = {
+            start_time: document.getElementById("start_time").value,
+            end_time: document.getElementById("end_time").value,
+            org_name: document.getElementById("org_name").value.trim(),
+            position: document.getElementById("position").value.trim(),
+            dept_name: document.getElementById("dept_name").value.trim()
+        };  // 提取表单信息
+        axios.post("/insertStudentOrganization", post_data)
+            .then(function(res) {
+                console.log(res);
+                // window.alert("添加成功!");
+                var resData = res.data;
+                if (res.status == 200) {
+                    tb = document.getElementById("studentOrgTB");
+                    trs = tb.getElementsByTagName("tr");
+                    last_tr = trs[trs.length-1];
+                    last_idx = parseInt(last_tr.getElementsByTagName("td")[0].textContent);  // 获取上一个序号
+                    if (last_idx) {
+                        idx = (last_idx + 1).toString();
+                    } else {
+                        idx = "1";
+                    };
+                    new_tr = document.createElement("tr");  // 新的一行
+                    idx_td = document.createElement("td");
+                    idx_td.appendChild(document.createTextNode(idx));
+                    new_tr.appendChild(idx_td);
+                    for (let ele in post_data) {
+                        td = document.createElement("td");
+                        td.appendChild(document.createTextNode(post_data[ele]));
+                        new_tr.appendChild(td);
 
-    var formSubmit = function () {
-        document.getElementById("myForm").submit()
-    }
+                    };
+                    tb.appendChild(new_tr);
+                };
+            })
+            .catch(function(err){
+                console.log(err);
+            });
+    };
 
-    var submitDATA = function () {
-        var student_id = document.getElementById("_id").value
-        console.log(student_id)
-        if (student_id) {
-            axios.post("/checkDocx", {s_id: student_id})
-                .then(function(res){
-                    var resData = res.data;
-                    var res_info = document.getElementById("res_info");
-                    var buttons = document.getElementById("buttons");
-
-                    res_info.style.display = "inline";
-                    res_info.innerHTML = resData;
-                    if (resData.indexOf("<table") >= 0){ // 如果查询到结果
-                        buttons.style.display = "inline";
-                    }
-                })
-                .catch(function(err){
-                    console.log(err);
-                })
-        } else {
-            console.log("帐号为空!")
-        }
-    }
-
-    var printMe = function (){
-        var oldBody = document.body.innerHTML;
-        document.body.innerHTML = "<h1>上海对外经贸大学学生第二课堂经历证明</h1>" + document.getElementById('res_info').innerHTML;
-        window.print();
-        document.body.innerHTML = oldBody // 恢复
-    }
-</script>
-<script>
     var open_layer1 = function () {
         layui.use('layer', function(){
             var layer = layui.layer;
@@ -175,40 +211,40 @@
                 type: 1,
                 title: "<p style='text-align:center;font-size:1.5em; font-weight:bold'>学生组织记录</p>",
                 area: ["400px", "450px"],
-                content: `<form id="add1" action="/" post="" class="layui-form">
+                content: `<form id="add1"  method="post" class="layui-form">
                                 <div class="layui-input-block">
                                     <label class="layui-form-label">开始时间</label>
                                     <div class="layui-input-block">
-                                        <input type="month" lay-verify="required" name="start_time" class="layui-input"/>
+                                        <input type="date" lay-verify="required" id="start_time" name="start_time" class="layui-input"/>
                                     </div>
                                 </div>
                                 <div class="layui-input-block">
                                     <label class="layui-form-label">结束时间</label>
                                     <div class="layui-input-block">
-                                        <input type="month" name="end_time" class="layui-input" placeholder="结束时间"/>
+                                        <input type="date" lay-verify="required" id="end_time" name="end_time" class="layui-input"/>
                                     </div>
                                 </div>
                                 <div class="layui-input-block">
                                     <label class="layui-form-label">组织名称</label>
                                     <div class="layui-input-block">
-                                        <input type="text" name="org_name" class="layui-input" placeholder="组织名称">
+                                        <input type="text" lay-verify="required" id="org_name" name="org_name" class="layui-input">
                                     </div>
                                 </div>
                                 <div class="layui-input-block">
                                     <label class="layui-form-label">职位</label>
                                     <div class="layui-input-block">
-                                        <input type="text" name="position" class="layui-input" placeholder="职位">
+                                        <input type="text" lay-verify="required" id="position" name="position" class="layui-input">
                                     </div>
                                 </div>
                                 <div class="layui-input-block">
-                                    <label class="layui-form-label">单位</label>
+                                    <label class="layui-form-label">隶属部门</label>
                                     <div class="layui-input-block">
-                                        <input type="text" name="dept_name" class="layui-input" placeholder="隶属部门">
+                                        <input type="text" lay-verify="required" id=dept_name name="dept_name" class="layui-input">
                                     </div>
                                 </div>
                                 <div class="layui-form-item">
                                     <div class="layui-input-block">
-                                        <button class="layui-btn-primary layui-btn-sm" lay-submit lay-filter="formDemo">提交</button>
+                                        <button class="layui-btn-primary layui-btn-sm" onclick="submitOrgData()">提交</button>
                                         <button type="reset" class="layui-btn-primary layui-btn-sm layui-btn-primary">重置</button>
                                     </div>
                                 </div>
@@ -225,7 +261,7 @@
                 type: 1,
                 title: "<p style='text-align:center; font-size:1.5em; font-weight:bold'>奖励记录</p>",
                 area: ["400px", "300px"],
-                content: `<form id="add2" action="/" post="" class="layui-form">
+                content: `<form id="add2" method="post" class="layui-form">
                                 <div class="layui-input-block">
                                     <label class="layui-form-label">奖励时间</label>
                                     <div class="layui-input-block">
@@ -235,18 +271,18 @@
                                 <div class="layui-input-block">
                                     <label class="layui-form-label">奖励名称</label>
                                     <div class="layui-input-block">
-                                        <input type="text" name="scholar_name" class="layui-input" placeholder="奖励名称">
+                                        <input type="text" name="scholar_name" class="layui-input" lay-verify="required">
                                     </div>
                                 </div>
                                 <div class="layui-input-block">
                                     <label class="layui-form-label">奖励级别</label>
                                     <div class="layui-input-block">
-                                        <input type="text" name="level" class="layui-input" placeholder="奖励级别">
+                                        <input type="text" name="level" class="layui-input" lay-verify="required">
                                     </div>
                                 </div>
                                 <div class="layui-form-item">
                                     <div class="layui-input-block">
-                                        <button class="layui-btn-primary layui-btn-sm" lay-submit lay-filter="formDemo">提交</button>
+                                        <button class="layui-btn-primary layui-btn-sm" onclick="">提交</button>
                                         <button type="reset" class="layui-btn-primary layui-btn-sm layui-btn-primary">重置</button>
                                     </div>
                                 </div>

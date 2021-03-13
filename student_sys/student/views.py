@@ -1,48 +1,48 @@
 from re import template
 from django.contrib import auth
-from django.http.response import HttpResponse
+from django.http.response import Http404, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Permission, Group
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 from django.views import View
-from .models import Student, Project, StudentJoinProject
-from .forms import StudentForm, ProjectForm, StudentJoinProjectForm
+from .models import Student, Project, StudentJoinProject, StudentOrganization, StudentScholar
 from .write_docx import ReportDocx
 import json
 
 
-# def index(request):
-#     students = Student.get_all()
-#     if request.method == "POST":
-#         form = StudentForm(request.POST)
-#         if form.is_valid():
-#             # cleaned_data = form.cleaned_data
-#             # student = Student()
-#             # student.name = cleaned_data["name"]
-#             # student.sex = cleaned_data["sex"]
-#             # student.email = cleaned_data["email"]
-#             # student.profession = cleaned_data["profession"]
-#             # student.qq = cleaned_data["qq"]
-#             # student.phone = cleaned_data["phone"]
-#             # student.save()
-#             form.save()
-#             return HttpResponseRedirect(reverse("index"))
-#     else:
-#         form = StudentForm()
-
-#     context = {"students": students, "form": form}
-
-#     return render(request, "index.html", context=context)
-
-
-class IndexView(View):
-    template_name = "index.html"
+class LoginView(View):
+    login_name = "login.html"
     teacher_main_page = "teacher_main.html"
     student_main_page = "student_main.html"
+
     def get(self, request):
-        return render(request, self.template_name)
+        is_login = request.session.get("is_login", False)
+        if is_login:
+            u = request.session["username"]
+            role = request.session["role"]
+            print(u, role)
+            if role == "教师":
+                return render(request, self.teacher_main_page, {"request": request, "user": u})
+            else:
+                reportDoc = ReportDocx(u)
+                infos = reportDoc.hint_list  # 错误提示
+                report = reportDoc.student_report  # 学生信息
+                print(request, report["参加活动经历"])
+                return render(
+                    request,
+                    self.student_main_page,
+                    {
+                        "request": request,
+                        "user": u,
+                        "infos": infos,
+                        "meta_info": report["基础信息"],
+                        "activities": report["参加活动经历"],
+                    },
+                )
+        else:
+            return render(request, self.login_name)
 
     def post(self, request):
         u = request.POST.get("_id")  # 学号或者教工号
@@ -53,10 +53,15 @@ class IndexView(View):
             user = authenticate(username=u, password=p)
             if user:
                 if user.is_active:
-                    login(request, user)
+                    login(request, user)  # 登陆用户
+                    # 在session中记录用户和角色
+                    request.session["is_login"] = True
+                    request.session["username"] = u
                     if u_group == "教师":
+                        request.session["role"] = "教师"
                         return render(request, self.teacher_main_page, {"request": request, "user": u})
                     else:
+                        request.session["role"] = "学生"
                         reportDoc = ReportDocx(u)
                         infos = reportDoc.hint_list  # 错误提示
                         report = reportDoc.student_report  # 学生信息
@@ -79,12 +84,12 @@ class IndexView(View):
         else:
             self.tips = "用户不存在，请注册"
 
-        return render(request, self.template_name, {"request": request, "user": u})
+        return render(request, self.login_name)
 
 
 def logoutView(request):
     logout(request)
-    return redirect("index")
+    return redirect("login")
 
 
 @login_required(login_url="index")
@@ -153,3 +158,29 @@ def checkDocxView(request):
             response += a
 
     return HttpResponse(response)
+
+
+def insertStudentOrganization(request):
+    student_id = request.user
+    body = request.body.decode("utf-8")
+    res = json.loads(body)
+    start_time = res["start_time"]
+    end_time = res["end_time"]
+    org_name = res["org_name"]
+    position = res["position"]
+    dept_name = res["dept_name"]
+    insert_tuple = {
+        "s_id": student_id,
+        "org_name": org_name,
+        "start_time": start_time,
+        "end_time": end_time,
+        "position": position,
+        "department_name": dept_name,
+    }
+    try:
+        StudentOrganization.objects.create(**insert_tuple)
+        print(student_id, "插入成功!")
+        return HttpResponse("<p>添加成功</p>")
+    except Exception as e:
+        print(e)
+        return HttpResponse("<p>添加失败</p>")
