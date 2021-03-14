@@ -39,6 +39,8 @@ class LoginView(View):
                         "infos": infos,
                         "meta_info": report["基础信息"],
                         "activities": report["参加活动经历"],
+                        "organization": report["学生组织经历"],
+                        "scholar": report["获奖经历"],
                     },
                 )
         else:
@@ -75,6 +77,8 @@ class LoginView(View):
                                 "infos": infos,
                                 "meta_info": report["基础信息"],
                                 "activities": report["参加活动经历"],
+                                "organization": report["学生组织经历"],
+                                "scholar": report["获奖经历"],
                             },
                         )
                 else:
@@ -92,7 +96,6 @@ def logoutView(request):
     return redirect("login")
 
 
-@login_required(login_url="index")
 def downloadDocxView(request):
     if request.method == "POST":
         student_id = request.POST.get("_id")
@@ -106,6 +109,7 @@ def downloadDocxView(request):
         return render(request, "main.html")
 
 
+@login_required(login_url="")
 def checkDocxView(request):
     body = request.body.decode("utf-8")
     res = json.loads(body)
@@ -151,6 +155,39 @@ def checkDocxView(request):
             prj_html += table
             response += prj_html
 
+        if report["学生组织经历"]:
+            prj_html = f"<h3> 学生组织经历 </h3>"
+            table = """<table class='content'>
+                <tr>
+                    <th>序号</th><th>开始时间</th><th>结束时间</th><th>组织名称</th><th>职位</th>
+                    <th>指导单位</th><th>认证状态</th>
+                </tr>
+            """
+            for prj in report["学生组织经历"]:
+                row = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % tuple(
+                    prj
+                )
+                table += row
+
+            table += "</table>"
+            prj_html += table
+            response += prj_html
+
+        if report["获奖经历"]:
+            prj_html = f"<h3>获奖经历</h3>"
+            table = """<table class='content'>
+                <tr>
+                    <th>序号</th><th>获奖时间</th><th>奖励名称</th><th>奖励级别</th><th>认证状态</th>
+                </tr>
+            """
+            for prj in report["获奖经历"]:
+                row = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % tuple(prj)
+                table += row
+
+            table += "</table>"
+            prj_html += table
+            response += prj_html
+
     if infos:
         response += "<p>以下项目查询出错，很可能是没在项目表中找到对应的项目</p>"
         for i, info in enumerate(infos):
@@ -161,26 +198,28 @@ def checkDocxView(request):
 
 
 def insertStudentScholar(request):
-    student_id = request.user
     body = request.body.decode("utf-8")
     res = json.loads(body)
+    if "s_id" not in res:
+        res["s_id"] = request.user
     try:
         StudentScholar.objects.create(**res)
-        print(student_id, "插入成功!")
+        print(res, "插入成功!")
         return HttpResponse("<p>添加成功</p>")
     except Exception as e:
         print(e)
-        return HttpResponse("<p>添加失败</p>")
+        return HttpResponse("添加失败" + str(e))
 
 
 def insertStudentOrganization(request):
-    student_id = request.user
     body = request.body.decode("utf-8")
     res = json.loads(body)
+    if "s_id" not in res:
+        res["s_id"] = request.user
     try:
         StudentOrganization.objects.create(**res)
-        print(student_id, "插入成功!")
+        print(res, "插入成功!")
         return HttpResponse("<p>添加成功</p>")
     except Exception as e:
         print(e)
-        return HttpResponse("<p>添加失败</p>")
+        return HttpResponse("添加失败" + str(e))

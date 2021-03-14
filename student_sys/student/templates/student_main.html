@@ -95,12 +95,21 @@
                 </div>
                 <div class="item" id="exp_2">
                     <h3>学生组织经历</h3>
-                    <table class="layui-table" lay-skin="line" id="studentOrgTB">
+                    <table lay-even class="layui-table" lay-skin="line" id="studentOrgTB">
                         <thead>
                             <tr>
                                 <th>序号</th><th>开始时间</th><th>结束时间</th><th>活动名称</th><th>职位</th><th>隶属单位</th><th>认证状态</th>
                             </tr>
                         </thead>
+                        {% if organization %}
+                            {% for vs in organization %}
+                                <tr>
+                                    {% for v in vs %}
+                                        <td>{{ v }} </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
                     </table>
                     <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="open_layer1()">
                         <i class="layui-icon">&#xe654;</i>
@@ -114,6 +123,15 @@
                                 <th>序号</th><th>获奖时间</th><th>奖励名称</th><th>颁奖单位</th><th>认证状态</th>
                             </tr>
                         </thead>
+                        {% if scholar %}
+                            {% for vs in scholar %}
+                                <tr>
+                                    {% for v in vs %}
+                                        <td>{{ v }} </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
                     </table>
                     <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="open_layer2()">
                         <i class="layui-icon">&#xe654;</i>
@@ -212,14 +230,14 @@
                             <div class="layui-input-block">
                                 <label class="layui-form-label">隶属部门</label>
                                 <div class="layui-input-block">
-                                    <input type="text" lay-verify="required" id=dept_name name="dept_name" value="" class="layui-input">
+                                    <input type="text" lay-verify="required" id=department_name name="department_name" value="" class="layui-input">
                                 </div>
                             </div>
                         </form>
                         <div class="layui-input-block">
                             <div class="layui-form-item">
                                 <button class="layui-btn-primary layui-btn-sm" onclick="submitData('add1', 'studentOrgTB', '/insertStudentOrganization')">提交</button>
-                                <button class="layui-btn-primary layui-btn-sm layui-btn-primary" onclick="formReset()">重置</button>
+                                <button class="layui-btn-primary layui-btn-sm layui-btn-primary" onclick="formReset()">清空</button>
                             </div>
                         </div>`
             }
@@ -238,7 +256,7 @@
                                 <div class="layui-input-block">
                                     <label class="layui-form-label">奖励时间</label>
                                     <div class="layui-input-block">
-                                        <input type="month" lay-verify="required" name="start_time" value="" class="layui-input"/>
+                                        <input type="date" lay-verify="required" name="g_time" value="" class="layui-input"/>
                                     </div>
                                 </div>
                                 <div class="layui-input-block">
@@ -257,7 +275,7 @@
                             <div class="layui-form-item">
                                 <div class="layui-input-block">
                                     <button class="layui-btn-primary layui-btn-sm" onclick="submitData('add2', 'studentScholarTB', '/insertStudentScholar')">提交</button>
-                                    <button class="layui-btn-primary layui-btn-sm layui-btn-primary" onclick="formReset()">重置</button>
+                                    <button class="layui-btn-primary layui-btn-sm layui-btn-primary" onclick="formReset()">清空</button>
                                 </div>
                             </div>`
             });

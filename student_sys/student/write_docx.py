@@ -6,7 +6,6 @@ from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
 
-import re
 import os, sys
 import django
 
@@ -26,10 +25,9 @@ ACTIVITIES = [
     "技术特长类活动",
     "文体学术类活动",
 ]
-EX_ACTIVITIES = ["学生组织经历", "所获奖励"]
+EX_ACTIVITIES = ["学生组织经历", "获奖经历"]
 CONTENT_HEAD = ["序号", "活动日期", "活动名称", "主办单位", "认证状态"]
-EX_CONTENT_HEAD1 = ["序号", "开始时间", "结束时间", "组织名称", "职位", "知道单位", "认证状态"]
-EX_CONTENT_HEAD2 = ["序号", "评奖学年", "奖学金名称", "教学金级别", "认证状态"]
+EX_CONTENT_HEAD = [["序号", "开始时间", "结束时间", "组织名称", "职位", "指导单位", "认证状态"], ["序号", "获奖时间", "奖励名称", "奖励级别", "认证状态"]]
 
 
 class ReportDocx:
@@ -39,15 +37,13 @@ class ReportDocx:
         activities=ACTIVITIES,
         ex_activities=EX_ACTIVITIES,
         content_head=CONTENT_HEAD,
-        ex_content_head1=EX_CONTENT_HEAD1,
-        ex_content_head2=EX_CONTENT_HEAD2,
+        ex_content_head=EX_CONTENT_HEAD,
     ):
         self.student_id = student_id  # 学号
         self.activities = activities  # 参加的活动类别
         self.ex_activities = ex_activities  # 其它经历
         self.content_head = content_head  # 参加活动类别的表格标题
-        self.ex_content_head1 = ex_content_head1  # 组织活动经历的表格标题
-        self.ex_content_head2 = ex_content_head2  # 奖学金
+        self.ex_content_head = ex_content_head  # 组织活动经历的表格标题
         self.student_report = {}
         self.hint_list = []  # 提示信息
         self.document = Document()  # 初始化docx文件
@@ -98,6 +94,33 @@ class ReportDocx:
                 "基础信息": [s.department_name, str(grade), s.major_name, s.student_id, s.name, sex],
                 "参加活动经历": p_info,
             }
+
+            organizationRecords = StudentOrganization.objects.filter(s_id=s.student_id)
+            scholarRecords = StudentScholar.objects.filter(s_id=s.student_id)
+            if organizationRecords:
+                self.student_report["学生组织经历"] = [
+                    [
+                        str(i),
+                        r.start_time.strftime("%Y年%m月"),
+                        r.end_time.strftime("%Y年%m月"),
+                        r.org_name,
+                        r.position,
+                        r.department_name,
+                        r.certify_state,
+                    ]
+                    for i, r in enumerate(organizationRecords, start=1)
+                ]
+            else:
+                self.student_report["学生组织经历"] = []
+
+            if scholarRecords:
+                self.student_report["获奖经历"] = [
+                    [str(i), r.g_time.strftime("%Y年%m月"), r.scholar_name, r.level, r.certify_state]
+                    for i, r in enumerate(scholarRecords, start=1)
+                ]
+            else:
+                self.student_report["获奖经历"] = []
+
         except Exception as e:
             print(self.student_id, e)
             self.hint_list.append([self.student_id, str(e)])
@@ -196,7 +219,7 @@ class ReportDocx:
             c.font.color.rgb = RGBColor(0, 0, 0)
             c.font.bold = True
 
-            table = self.document.add_table(rows=2, cols=5)
+            table = self.document.add_table(rows=len(self.student_report[title]) + 1, cols=len(self.ex_content_head[i]))
             head_row = table.rows[0].cells  # 标题行单元格
 
             for j, cell in enumerate(head_row):
@@ -207,18 +230,38 @@ class ReportDocx:
                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
                 p = cell.paragraphs[0]
                 # p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-                c = p.add_run(self.ex_content_head[j])
+                c = p.add_run(self.ex_content_head[i][j])
                 c.font.size = Pt(7.5)
                 c.font.name = "Times New Roman"
                 c._element.rPr.rFonts.set(qn("w:eastAsia"), "微软雅黑")
                 c.font.color.rgb = RGBColor(0, 0, 0)
                 c.font.bold = True
 
+            if len(self.student_report[title]) == 0:
+                pass
+            else:
+                for k, d in enumerate(self.student_report[title]):  # 内容行单元格
+                    row = table.rows[k + 1].cells
+                    row_content = self.student_report[title][k]
+                    for l, cell in enumerate(row):
+                        if j == 1:
+                            cell.width = Cm(4)
+
+                        cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                        p = cell.paragraphs[0]
+                        # p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                        c = p.add_run(row_content[l])
+                        c.font.size = Pt(7.5)
+                        c.font.name = "Times New Roman"
+                        c._element.rPr.rFonts.set(qn("w:eastAsia"), "宋体")
+                        c.font.color.rgb = RGBColor(0, 0, 0)
+                        c.font.bold = False
+
     def download(self):
         self.document.save(f"{self.student_id}-report.docx")
 
 
 if __name__ == "__main__":
-    s_id = "19080010"
+    s_id = "19057032"
     reportDocx = ReportDocx(s_id)
     reportDocx.download()
