@@ -7,4 +7,5 @@ urlpatterns = [
     path("checkDocx", views.checkDocxView, name="checkDocx"),
     path("logout", views.logoutView, name="logout"),
     path("insertStudentOrganization", views.insertStudentOrganization, name="insertStudentOrganization"),
+    path("insertStudentScholar", views.insertStudentScholar, name="insertStudentScholar"),
 ]

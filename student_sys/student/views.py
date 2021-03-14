@@ -160,25 +160,25 @@ def checkDocxView(request):
     return HttpResponse(response)
 
 
+def insertStudentScholar(request):
+    student_id = request.user
+    body = request.body.decode("utf-8")
+    res = json.loads(body)
+    try:
+        StudentScholar.objects.create(**res)
+        print(student_id, "插入成功!")
+        return HttpResponse("<p>添加成功</p>")
+    except Exception as e:
+        print(e)
+        return HttpResponse("<p>添加失败</p>")
+
+
 def insertStudentOrganization(request):
     student_id = request.user
     body = request.body.decode("utf-8")
     res = json.loads(body)
-    start_time = res["start_time"]
-    end_time = res["end_time"]
-    org_name = res["org_name"]
-    position = res["position"]
-    dept_name = res["dept_name"]
-    insert_tuple = {
-        "s_id": student_id,
-        "org_name": org_name,
-        "start_time": start_time,
-        "end_time": end_time,
-        "position": position,
-        "department_name": dept_name,
-    }
     try:
-        StudentOrganization.objects.create(**insert_tuple)
+        StudentOrganization.objects.create(**res)
         print(student_id, "插入成功!")
         return HttpResponse("<p>添加成功</p>")
     except Exception as e:

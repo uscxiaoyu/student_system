@@ -113,7 +113,7 @@ class StudentScholar(models.Model):
     g_time = models.DateField(verbose_name="获奖时间")
     scholar_name = models.CharField(max_length=64, verbose_name="奖学金名称")
     level = models.CharField(max_length=64, verbose_name="奖学金级别")
-    certify_state = models.CharField(max_length=64, verbose_name="认证状态", default=None, blank=True)
+    certify_state = models.CharField(max_length=64, verbose_name="认证状态", default="未认证", blank=True)
     created_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name="创建时间")
 
     def __str__(self) -> str:

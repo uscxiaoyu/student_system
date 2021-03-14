@@ -15,7 +15,7 @@ sys.path.append(PROJ_ROOT)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "student_sys.settings")
 django.setup()
 
-from student.models import Student, Project, StudentJoinProject
+from student.models import Student, Project, StudentJoinProject, StudentScholar, StudentOrganization
 
 ACTIVITIES = [
     "思想成长类活动",
@@ -28,7 +28,8 @@ ACTIVITIES = [
 ]
 EX_ACTIVITIES = ["学生组织经历", "所获奖励"]
 CONTENT_HEAD = ["序号", "活动日期", "活动名称", "主办单位", "认证状态"]
-EX_CONTENT_HEAD = ["序号", "评奖学年", "奖学金名称", "教学金级别", "认证状态"]
+EX_CONTENT_HEAD1 = ["序号", "开始时间", "结束时间", "组织名称", "职位", "知道单位", "认证状态"]
+EX_CONTENT_HEAD2 = ["序号", "评奖学年", "奖学金名称", "教学金级别", "认证状态"]
 
 
 class ReportDocx:
@@ -38,13 +39,15 @@ class ReportDocx:
         activities=ACTIVITIES,
         ex_activities=EX_ACTIVITIES,
         content_head=CONTENT_HEAD,
-        ex_content_head=EX_CONTENT_HEAD,
+        ex_content_head1=EX_CONTENT_HEAD1,
+        ex_content_head2=EX_CONTENT_HEAD2,
     ):
         self.student_id = student_id  # 学号
         self.activities = activities  # 参加的活动类别
         self.ex_activities = ex_activities  # 其它经历
         self.content_head = content_head  # 参加活动类别的表格标题
-        self.ex_content_head = ex_content_head  # 其它经历的表格标题
+        self.ex_content_head1 = ex_content_head1  # 组织活动经历的表格标题
+        self.ex_content_head2 = ex_content_head2  # 奖学金
         self.student_report = {}
         self.hint_list = []  # 提示信息
         self.document = Document()  # 初始化docx文件
