@@ -8,7 +8,7 @@
     <script src="/static/axios.min.js"></script>
     {% comment %} <script src="../static/layui/layui.all.js"></script>
     <link rel="stylesheet", href="../static/layui/css/layui.css"> {% endcomment %}
-    <link rel="stylesheet" href="/static/mainboard.css">
+    <link rel="stylesheet" href="/static/cssFiles/teacher.css">
 </head>
 <body>
     <div class="container">
@@ -19,23 +19,25 @@
                 <a href="/logout" style="font-size: 12; font-color: yellow">退出登录</a>
             <span>
         </div>
-        <div class="content">
+        
+        <div class="sider">
             <div class="search">
                 <form id="myForm" method="post" action="/downloadDocx">
-                    <span>
-                        <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()"/>
-                    </span><br>
+                    <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()"/><br>
                 </form>
                 <span>
                     <button onclick="submitDATA()">查看</button>
                 </span>
-                <span class="display_info" id="buttons" style="display:none">
+            </div>
+        </div>
+
+        <div class="main display_info" style="display:none">
+            <span id="buttons">
                     <button onclick="printMe()">打印</button>
                     <button onclick="formSubmit()">导出</button>
-                </span>
+            </span>
+            <div id="res_info">
             </div>
-            <div class="display_info" id="res_info"></div>
-            {% comment %} <div><table id="demo" lay-filter="test"></table></div> {% endcomment %}
         </div>
     </div>
 </body>
@@ -57,6 +59,7 @@
         if (student_id) {
             axios.post("/checkDocx", {s_id: student_id})
                 .then(function(res){
+                    document.getElementsByClassName("main")[0].style.display = "block";
                     var resData = res.data;
                     var res_info = document.getElementById("res_info");
                     var buttons = document.getElementById("buttons");

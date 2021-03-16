@@ -6,7 +6,7 @@ body {
 
 .container {
     display: grid;
-    grid-template-columns: 1fr 1000px 1fr;
+    grid-template-columns: 1fr 1210px 1fr;
     grid-template-rows: 60px auto 30px;
     justify-content: center;
     grid-gap: 10px;
