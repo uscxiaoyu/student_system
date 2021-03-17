@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>教师工作主页</title>
     <script src="/static/axios.min.js"></script>
-    {% comment %} <script src="../static/layui/layui.all.js"></script>
-    <link rel="stylesheet", href="../static/layui/css/layui.css"> {% endcomment %}
+    <script src="../static/layui/layui.all.js"></script>
+    <link rel="stylesheet", href="../static/layui/css/layui.css">
     <link rel="stylesheet" href="/static/cssFiles/teacher.css">
 </head>
 <body>
@@ -15,26 +15,32 @@
         <div class="header">
             <h1> 上海对外经贸大学第二课堂成绩系统 </h1>
             <span id="menu">
-                <p> 欢迎您, <i>{{ request.user }}</i>! </p>
+                <p> 欢迎您, <strong>{{ request.user }}</strong>! </p>
                 <a href="/logout" style="font-size: 12; font-color: yellow">退出登录</a>
             <span>
         </div>
         
         <div class="sider">
             <div class="search">
-                <form id="myForm" method="post" action="/downloadDocx">
-                    <input type="text" name="_id" id="_id" placeholder="输入学号" onfocus="clearAlarm()"/><br>
+                <form class="layui-form" id="myForm" method="post" action="/downloadDocx">
+                    <div class="layui-itme">
+                        <input class="layui-input-inline" type="text" name="_id" id="_id" 
+                            required lay-verify="required" placeholder="请输入学号" onfocus="clearAlarm()"/><br>
+                    </div>
                 </form>
                 <span>
-                    <button onclick="submitDATA()">查看</button>
+                    <button class="layui-btn layui-btn-sm" onclick="submitDATA()">查看</button>
                 </span>
+            </div>
+            <div class="file_upload">
+
             </div>
         </div>
 
         <div class="main display_info" style="display:none">
             <span id="buttons">
-                    <button onclick="printMe()">打印</button>
-                    <button onclick="formSubmit()">导出</button>
+                    <button class="layui-btn layui-btn-sm" onclick="printMe()">打印</button>
+                    <button class="layui-btn layui-btn-sm" onclick="formSubmit()">导出</button>
             </span>
             <div id="res_info">
             </div>
@@ -54,7 +60,7 @@
     }
 
     var submitDATA = function () {
-        var student_id = document.getElementById("_id").value
+        let student_id = document.getElementById("_id").value
         console.log(student_id)
         if (student_id) {
             axios.post("/checkDocx", {s_id: student_id})

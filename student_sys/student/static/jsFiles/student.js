@@ -11,13 +11,19 @@ var getFormValues = function(form) { // 获取表单中的input值
     return data;
 };
 
-var submitData = function(form_tag, tb_tag, post_url) {
+var submitData = function(form_tag, tb_tag, post_url, del_url) {
     let form = document.getElementById(form_tag);
     let post_data = getFormValues(form);
     axios.post(post_url, post_data)
         .then(function(res) {
             window.alert("添加成功!");
-            var resData = res.data;
+            if (post_url.indexOf('Org') >= 0) {
+                var r_id = `${res.data.id}` + '_O';
+            } else {
+                var r_id = `${res.data.id}` + '_S';
+            }
+
+            console.log(res);
             if (res.status == 200) {
                 tb = document.getElementById(tb_tag);
                 trs = tb.getElementsByTagName("tr");
@@ -32,7 +38,6 @@ var submitData = function(form_tag, tb_tag, post_url) {
                 var idx_td = document.createElement("td");
                 idx_td.appendChild(document.createTextNode(idx));
                 new_tr.appendChild(idx_td);
-                console.log(post_data)
                 for (let ele in post_data) {
                     td = document.createElement("td");
                     td.appendChild(document.createTextNode(post_data[ele]));
@@ -41,7 +46,17 @@ var submitData = function(form_tag, tb_tag, post_url) {
                 td = document.createElement("td");
                 td.appendChild(document.createTextNode("未认证"));
                 new_tr.appendChild(td);
-                tb.appendChild(new_tr);
+
+                td = document.createElement("td");
+                b = document.createElement("button");
+                b.setAttribute("id", r_id);
+                b.setAttribute("onclick", `deleteData(this, '${del_url}')`)
+                b.setAttribute("class", "layui-btn-primary layui-btn-sm");
+                b.appendChild(document.createTextNode("删除"));
+                td.appendChild(b);
+                new_tr.appendChild(td);
+
+                last_tr.parentNode.appendChild(new_tr);
             } else {
                 window.alert("添加失败");
             }
@@ -49,6 +64,23 @@ var submitData = function(form_tag, tb_tag, post_url) {
         .catch(function(err) {
             window.alert(err);
         });
+};
+
+var deleteData = function(btn, del_url) {
+    let tr = btn.parentNode.parentNode; // 记录对应的行
+    let r_id = parseInt(btn.id) // 记录对应的id有后缀_S或_O
+    axios({
+        method: 'get',
+        url: del_url + `/${r_id}`
+    }).then(function(res) {
+        console.log(res.data)
+        if (res.status == 200) {
+            window.alert('删除成功')
+            tr.remove();
+        }
+    }).catch(function(err) {
+        window.alert(err);
+    });
 };
 
 var open_layer1 = function() {
@@ -92,7 +124,7 @@ var open_layer1 = function() {
                     </form>
                     <div class="layui-input-block">
                         <div class="layui-form-item">
-                            <button class="layui-btn-primary layui-btn-sm" onclick="submitData('add1', 'studentOrgTB', '/insertStudentOrganization')">提交</button>
+                            <button class="layui-btn-primary layui-btn-sm" onclick="submitData('add1', 'studentOrgTB', '/insertStudentOrganization', '/deleteStudentOrganization')">提交</button>
                             <button class="layui-btn-primary layui-btn-sm layui-btn-primary" onclick="formReset()">清空</button>
                         </div>
                     </div>`
@@ -129,7 +161,7 @@ var open_layer2 = function() {
                         </form>
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button class="layui-btn-primary layui-btn-sm" onclick="submitData('add2', 'studentScholarTB', '/insertStudentScholar')">提交</button>
+                                <button class="layui-btn-primary layui-btn-sm" onclick="submitData('add2', 'studentScholarTB', '/insertStudentScholar', '/deleteStudentScholar')">提交</button>
                                 <button class="layui-btn-primary layui-btn-sm layui-btn-primary" onclick="formReset()">清空</button>
                             </div>
                         </div>`

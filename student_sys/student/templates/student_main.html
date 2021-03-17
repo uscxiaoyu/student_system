@@ -98,15 +98,15 @@
                     <table class="layui-table" lay-skin="line" id="studentOrgTB">
                         <thead>
                             <tr>
-                                <th>序号</th><th>开始时间</th><th>结束时间</th><th>活动名称</th><th>职位</th><th>隶属单位</th><th>认证状态</th>
+                                <th>序号</th><th>开始时间</th><th>结束时间</th><th>所在部门</th><th>职位</th><th>隶属单位</th><th>认证状态</th><th>操作</th>
                             </tr>
                         </thead>
                         {% if organization %}
                             {% for vs in organization %}
                                 <tr>
-                                    {% for v in vs %}
-                                        <td>{{ v }} </td>
-                                    {% endfor %}
+                                    <td>{{ vs.0 }} </td><td>{{ vs.1 }} </td><td>{{ vs.2 }} </td><td>{{ vs.3 }} </td>
+                                    <td>{{ vs.4 }} </td> </td><td>{{ vs.5 }} </td><td>{{ vs.6 }} </td>
+                                    <td><button class="layui-btn-primary layui-btn-sm" onclick="deleteData(this, '/deleteStudentOrganization')" id={{ vs.7 }}>删除</button></td>
                                 </tr>
                             {% endfor %}
                         {% endif %}
@@ -120,15 +120,15 @@
                     <table class="layui-table" lay-skin="line" id="studentScholarTB">
                         <thead>
                             <tr>
-                                <th>序号</th><th>获奖时间</th><th>奖励名称</th><th>颁奖单位</th><th>认证状态</th>
+                                <th>序号</th><th>获奖时间</th><th>奖励名称</th><th>颁奖单位</th><th>认证状态</th><th>操作</th>
                             </tr>
                         </thead>
                         {% if scholar %}
                             {% for vs in scholar %}
                                 <tr>
-                                    {% for v in vs %}
-                                        <td>{{ v }} </td>
-                                    {% endfor %}
+                                    <td>{{ vs.0 }} </td><td>{{ vs.1 }} </td><td>{{ vs.2 }} </td><td>{{ vs.3 }} </td>
+                                    <td>{{ vs.4 }} </td>
+                                    <td><button class="layui-btn-primary layui-btn-sm" onclick="deleteData(this, '/deleteStudentScholar')" id={{ vs.5 }}>删除</button></td>
                                 </tr>
                             {% endfor %}
                         {% endif %}

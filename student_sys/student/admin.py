@@ -47,12 +47,12 @@ class StudentJoinProjectAdmin(admin.ModelAdmin):
 @admin.register(StudentOrganization)
 class StudentOrgnizationAdmin(admin.ModelAdmin):
     search_fields = ("s_id", "org_name", "department_name")
-    list_filter = ("department_name", "org_name")
-    list_display = ("s_id", "org_name", "position", "start_time", "end_time", "department_name")
+    list_filter = ("department_name", "org_name", "certify_state")
+    list_display = ("s_id", "org_name", "position", "start_time", "end_time", "department_name", "certify_state")
 
 
 @admin.register(StudentScholar)
 class StudentScholarAdmin(admin.ModelAdmin):
     search_fields = ("s_id", "g_time", "scholar_name")
-    list_filter = ("s_id", "scholar_name")
-    list_display = ("s_id", "g_time", "scholar_name", "level")
+    list_filter = ("s_id", "scholar_name", "certify_state")
+    list_display = ("s_id", "g_time", "scholar_name", "level", "certify_state")

@@ -123,12 +123,18 @@ input {
     width: 90%;
     background-color: aliceblue;
     border: 1px solid grey;
+    font-size: medium;
 }
 
-button {
+.layui-btn-sm {
+    font-size: 0.6em;
+}
+
+
+/* button {
     border-radius: 2px;
     border: 1px solid grey;
-}
+} */
 
 input:focus,
 textarea:focus {

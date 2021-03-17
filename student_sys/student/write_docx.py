@@ -107,6 +107,7 @@ class ReportDocx:
                         r.position,
                         r.department_name,
                         r.certify_state,
+                        str(r.id) + "_O"
                     ]
                     for i, r in enumerate(organizationRecords, start=1)
                 ]
@@ -115,7 +116,7 @@ class ReportDocx:
 
             if scholarRecords:
                 self.student_report["获奖经历"] = [
-                    [str(i), r.g_time.strftime("%Y年%m月"), r.scholar_name, r.level, r.certify_state]
+                    [str(i), r.g_time.strftime("%Y-%m-%d"), r.scholar_name, r.level, r.certify_state, str(r.id) + "_S"]
                     for i, r in enumerate(scholarRecords, start=1)
                 ]
             else:

@@ -1,5 +1,6 @@
 from re import template
 from django.contrib import auth
+from django.http import JsonResponse
 from django.http.response import Http404, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Permission, Group
@@ -93,7 +94,7 @@ class LoginView(View):
 
 def logoutView(request):
     logout(request)
-    return redirect("login")
+    return redirect("student:login")
 
 
 def downloadDocxView(request):
@@ -159,13 +160,13 @@ def checkDocxView(request):
             prj_html = f"<h3> 学生组织经历 </h3>"
             table = """<table class='content'>
                 <tr>
-                    <th>序号</th><th>开始时间</th><th>结束时间</th><th>组织名称</th><th>职位</th>
+                    <th>序号</th><th>开始时间</th><th>结束时间</th><th>所在部门</th><th>职位</th>
                     <th>指导单位</th><th>认证状态</th>
                 </tr>
             """
             for prj in report["学生组织经历"]:
                 row = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % tuple(
-                    prj
+                    prj[:-1]
                 )
                 table += row
 
@@ -181,7 +182,7 @@ def checkDocxView(request):
                 </tr>
             """
             for prj in report["获奖经历"]:
-                row = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % tuple(prj)
+                row = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % tuple(prj[:-1])
                 table += row
 
             table += "</table>"
@@ -203,12 +204,19 @@ def insertStudentScholar(request):
     if "s_id" not in res:
         res["s_id"] = request.user
     try:
-        StudentScholar.objects.create(**res)
-        print(res, "插入成功!")
-        return HttpResponse("<p>添加成功</p>")
+        r = StudentScholar.objects.create(**res)
+        return JsonResponse({"id": r.id})
     except Exception as e:
         print(e)
         return HttpResponse("添加失败" + str(e))
+
+@login_required(login_url="")
+def deleteStudentScholar(request, r_id):
+    try:
+        StudentScholar.objects.get(id=r_id).delete()
+        return HttpResponse(f"删除学生组织经历{r_id}成功")
+    except Exception as e:
+        return HttpResponse("删除失败")
 
 
 def insertStudentOrganization(request):
@@ -223,3 +231,11 @@ def insertStudentOrganization(request):
     except Exception as e:
         print(e)
         return HttpResponse("添加失败" + str(e))
+
+@login_required(login_url="")
+def deleteStudentOrganization(request, r_id):
+    try:
+        StudentOrganization.objects.get(id=r_id).delete()
+        return HttpResponse(f"删除获奖经历{r_id}成功")
+    except Exception as e:
+        return HttpResponse("删除失败")

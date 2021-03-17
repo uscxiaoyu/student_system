@@ -8,4 +8,6 @@ urlpatterns = [
     path("logout", views.logoutView, name="logout"),
     path("insertStudentOrganization", views.insertStudentOrganization, name="insertStudentOrganization"),
     path("insertStudentScholar", views.insertStudentScholar, name="insertStudentScholar"),
+    path("deleteStudentOrganization/<int:r_id>", views.deleteStudentOrganization, name="deleteStudentOrganization"),
+    path("deleteStudentScholar/<int:r_id>", views.deleteStudentScholar, name="deleteStudentScholar"),
 ]
