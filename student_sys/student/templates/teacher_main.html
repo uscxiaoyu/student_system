@@ -20,29 +20,46 @@
             <span>
         </div>
         
-        <div class="sider">
-            <div class="search">
-                <form class="layui-form" id="myForm" method="post" action="/downloadDocx">
-                    <div class="layui-itme">
-                        <input class="layui-input-inline" type="text" name="_id" id="_id" 
-                            required lay-verify="required" placeholder="请输入学号" onfocus="clearAlarm()"/><br>
+        {% comment %} <div class="sider">
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">工作台</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="">信息查询</a>
+                </li>
+            </ul>
+        </div> {% endcomment %}
+
+        <div class="main">
+            <div class="layui-tab layui-tab-card">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">待认证记录</li>
+                    <li>信息查询</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        {% comment %} 此处为各学院的待认证组织经历和奖励经历列表 {% endcomment %}
+                        
                     </div>
-                </form>
-                <span>
-                    <button class="layui-btn layui-btn-sm" onclick="submitDATA()">查看</button>
-                </span>
-            </div>
-            <div class="file_upload">
-
-            </div>
-        </div>
-
-        <div class="main display_info" style="display:none">
-            <span id="buttons">
-                    <button class="layui-btn layui-btn-sm" onclick="printMe()">打印</button>
-                    <button class="layui-btn layui-btn-sm" onclick="formSubmit()">导出</button>
-            </span>
-            <div id="res_info">
+                    <div class="layui-tab-item">
+                        <div class="search">
+                            <form class="layui-form" id="myForm" method="post" action="/downloadDocx">
+                                <div class="layui-item">
+                                    <input class="layui-input-inline" type="text" name="_id" id="_id" 
+                                        required lay-verify="required" placeholder="请输入学号" onfocus="clearAlarm()"/>
+                                </div>
+                            </form>
+                            <div class="layui-item">
+                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="submitDATA()">查看</button>
+                            </div>
+                        </div>
+                        <div class="display_info" id="res_info"></div>
+                        <span class="display_info" id="buttons" style="display:none">
+                            {% comment %} <button class="layui-btn layui-btn-sm" onclick="printMe()">打印</button> {% endcomment %}
+                            <button class="layui-btn" onclick="formSubmit()">导出</button>
+                        </span>
+                </div>
             </div>
         </div>
     </div>
@@ -90,6 +107,11 @@
         window.print();
         document.body.innerHTML = oldBody // 恢复
     }
+</script>
+<script>
+    layui.use('element', function(){
+        var element = layui.element;
+    });
 </script>
 </html>
 

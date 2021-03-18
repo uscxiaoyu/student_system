@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.enums import Choices
+from django.contrib.auth.models import User
 
 
 # 学生表
@@ -104,6 +105,7 @@ class StudentOrganization(models.Model):
         return cls.objects.all()
 
     class Meta:
+        ordering = ["created_time"]
         verbose_name = verbose_name_plural = "学生组织活动信息"
 
 
@@ -124,4 +126,32 @@ class StudentScholar(models.Model):
         return cls.objects.all()
 
     class Meta:
+        ordering = ["created_time"]
         verbose_name = verbose_name_plural = "学生获奖信息"
+
+
+class UserProfile(models.Model):
+    DEPT_ITEMS = [
+        (0, "统计与信息学院"),
+        (1, "工商管理学院"),
+        (2, "国际经贸学院"),
+        (3, "国际商务外语学院"),
+        (4, "金融管理学院"),
+        (5, "会展与旅游学院"),
+        (6, "法学院"),
+        (7, "贸易谈判学院"),
+        (8, "会计学院"),
+    ]
+    user = models.OneToOneField(User, null=True, on_delete=models.SET_NULL, verbose_name="用户")
+    department = models.IntegerField(choices=DEPT_ITEMS, verbose_name="所在部门")
+    created_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name="创建时间")
+
+    @classmethod
+    def get_all(cls):
+        return cls.objects.all()
+
+    def __str__(self) -> str:
+        return "<user: {}, department: {}>".format(self.user, self.department)
+
+    class Meta:
+        verbose_name = verbose_name_plural = "用户补充信息"

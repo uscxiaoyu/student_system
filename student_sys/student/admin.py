@@ -1,6 +1,5 @@
 from django.contrib import admin
-from django.contrib.admin.decorators import register
-from .models import Student, Department, Project, StudentJoinProject, StudentOrganization, StudentScholar
+from .models import Student, Department, Project, StudentJoinProject, StudentOrganization, StudentScholar, UserProfile
 
 admin.site.site_title = "第二课堂成绩数据管理系统"
 admin.site.site_header = "第二课堂成绩后台管理系统"
@@ -56,3 +55,10 @@ class StudentScholarAdmin(admin.ModelAdmin):
     search_fields = ("s_id", "g_time", "scholar_name")
     list_filter = ("s_id", "scholar_name", "certify_state")
     list_display = ("s_id", "g_time", "scholar_name", "level", "certify_state")
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    search_fields = ("user", "department")
+    list_filter = ("department",)
+    list_display = ("id", "user", "department", "created_time")

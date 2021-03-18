@@ -8,8 +8,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 from django.views import View
-from .models import Student, Project, StudentJoinProject, StudentOrganization, StudentScholar
+from .models import Student, Project, StudentJoinProject, StudentOrganization, StudentScholar, UserProfile
 from .write_docx import ReportDocx
+from .access_databases import getOrgByDeptName, getScholarByDeptName
 import json
 
 
@@ -25,7 +26,16 @@ class LoginView(View):
             role = request.session["role"]
             print(u, role)
             if role == "教师":
-                return render(request, self.teacher_main_page, {"request": request, "user": u})
+                request.session["role"] = "教师"
+                user = User.objects.get(username=u)
+                u_department = user.userprofile.get_department_display()  # 教师所在部门
+                org_res = getOrgByDeptName(dept_name=u_department)
+                scholar_res = getScholarByDeptName(dept_name=u_department)
+                return render(
+                    request,
+                    self.teacher_main_page,
+                    {"request": request, "user": u, "org_res": org_res, "sholar_res": scholar_res},
+                )
             else:
                 reportDoc = ReportDocx(u)
                 infos = reportDoc.hint_list  # 错误提示
@@ -51,7 +61,8 @@ class LoginView(View):
         u = request.POST.get("_id")  # 学号或者教工号
         p = request.POST.get("pwd")
         if User.objects.filter(username=u):
-            u_id = User.objects.get(username=u).id
+            user = User.objects.get(username=u)
+            u_id = user.id
             u_group = Group.objects.get(user=u_id).name
             user = authenticate(username=u, password=p)
             if user:
@@ -62,7 +73,14 @@ class LoginView(View):
                     request.session["username"] = u
                     if u_group == "教师":
                         request.session["role"] = "教师"
-                        return render(request, self.teacher_main_page, {"request": request, "user": u})
+                        u_department = user.userprofile.get_department_display()  # 教师所在部门
+                        org_res = getOrgByDeptName(dept_name=u_department)
+                        scholar_res = getScholarByDeptName(dept_name=u_department)
+                        return render(
+                            request,
+                            self.teacher_main_page,
+                            {"request": request, "user": u, "org_res": org_res, "sholar_res": scholar_res},
+                        )
                     else:
                         request.session["role"] = "学生"
                         reportDoc = ReportDocx(u)
@@ -210,6 +228,7 @@ def insertStudentScholar(request):
         print(e)
         return HttpResponse("添加失败" + str(e))
 
+
 @login_required(login_url="")
 def deleteStudentScholar(request, r_id):
     try:
@@ -231,6 +250,7 @@ def insertStudentOrganization(request):
     except Exception as e:
         print(e)
         return HttpResponse("添加失败" + str(e))
+
 
 @login_required(login_url="")
 def deleteStudentOrganization(request, r_id):
