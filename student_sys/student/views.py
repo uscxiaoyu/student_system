@@ -278,3 +278,34 @@ def deleteStudentOrganization(request, r_id):
         return HttpResponse(f"删除获奖经历{r_id}成功")
     except Exception as e:
         return HttpResponse("删除失败")
+
+
+@login_required(login_url="")
+def updateOrganizationState(request):
+    try:
+        body = request.body.decode("utf-8")
+        res = json.loads(body)
+        _id = res["_id"]
+        state = res["state"]
+        StudentOrganization.objects.filter(id=_id).update(certify_state=state)
+        return HttpResponse("更新成功")
+    except Exception as e:
+        print(e)
+        return HttpResponse("更新失败")
+
+
+@login_required(login_url="")
+def updateScholarState(request):
+    try:
+        body = request.body.decode("utf-8")
+        res = json.loads(body)
+        print(res)
+        _id = res["_id"]
+        state = res["state"]
+        StudentScholar.objects.filter(id=_id).update(certify_state=state)
+        return HttpResponse("更新成功")
+    except Exception as e:
+        print(e)
+        return HttpResponse("更新失败")
+
+

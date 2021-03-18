@@ -7,6 +7,7 @@
     <title>教师工作主页</title>
     <script src="/static/axios.min.js"></script>
     <script src="../static/layui/layui.all.js"></script>
+    <script src="/static/jsFiles/teacher.js"></script>
     <link rel="stylesheet", href="../static/layui/css/layui.css">
     <link rel="stylesheet" href="/static/cssFiles/teacher.css">
 </head>
@@ -19,17 +20,6 @@
                 <a href="/logout" style="font-size: 12; font-color: yellow">退出登录</a>
             <span>
         </div>
-        
-        {% comment %} <div class="sider">
-            <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a href="javascript:;">工作台</a>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="">信息查询</a>
-                </li>
-            </ul>
-        </div> {% endcomment %}
 
         <div class="main">
             <div class="layui-tab layui-tab-card">
@@ -54,9 +44,9 @@
                                         <td>{{ row.5 }}</td><td>{{ row.6 }}</td>
                                         <td>{{ row.7 }}</td><td>{{ row.8 }}</td>
                                         <td>
-                                            <span id={{ vs.9 }}>
-                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="#">通过</button>
-                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="#">返修</button>
+                                            <span id={{ row.9 }}>
+                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="updateOrganizationState(this)">通过</button>
+                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="updateOrganizationState(this)">返修</button>
                                             </span>
                                         </td>
                                     </tr>
@@ -78,9 +68,9 @@
                                         <td>{{ row.3 }}</td><td>{{ row.4 }}</td>
                                         <td>{{ row.5 }}</td><td>{{ row.6 }}</td>
                                         <td>
-                                            <span id={{ vs.7 }}>
-                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="#">通过</button>
-                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="#">返修</button>
+                                            <span id={{ row.7 }}>
+                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="updateScholarState(this)">通过</button>
+                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="updateScholarState(this)">返修</button>
                                             </span>
                                         </td>
                                     </tr>
@@ -111,58 +101,8 @@
     </div>
 </body>
 <script>
-    var clearAlarm = function () {
-        var mask_tags = document.getElementsByClassName("display_info")
-        for (let mt of mask_tags) {
-            mt.style.display = "none";
-        }
-    }
-
-    var clearValue = function (input_tg){
-        input_tg.value = ""
-    };
-
-    var formSubmit = function () {
-        document.getElementById("myForm").submit()
-    }
-
-    var submitDATA = function () {
-        let student_id = document.getElementById("_id").value
-        console.log(student_id)
-        if (student_id) {
-            axios.post("/checkDocx", {s_id: student_id})
-                .then(function(res){
-                    document.getElementsByClassName("main")[0].style.display = "block";
-                    var resData = res.data;
-                    var res_info = document.getElementById("res_info");
-                    var buttons = document.getElementById("buttons");
-
-                    res_info.style.display = "inline";
-                    res_info.innerHTML = resData;
-                    if (resData.indexOf("<table") >= 0){ // 如果查询到结果
-                        buttons.style.display = "inline";
-                    }
-                })
-                .catch(function(err){
-                    console.log(err);
-                })
-        } else {
-            console.log("帐号为空!")
-        }
-    }
-
-    var printMe = function (){
-        var oldBody = document.body.innerHTML;
-        document.body.innerHTML = "<h2>上海对外经贸大学学生第二课堂经历证明</h2>" + document.getElementById('res_info').innerHTML;
-        window.print();
-        document.body.innerHTML = oldBody // 恢复
-    }
-</script>
-<script>
     layui.use('element', function(){
         var element = layui.element;
     });
 </script>
 </html>
-
- {% comment %} onclick="submitDATA()" {% endcomment %}
