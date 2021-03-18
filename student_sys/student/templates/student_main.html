@@ -26,6 +26,7 @@
                 <li><a href="#exp_1">第二课堂经历</a></li>
                 <li><a href="#exp_2">学生组织经历</a></li>
                 <li><a href="#exp_3">所获奖励</a></li>
+                <li><a href="#export">导出文件</a></li>
             </ul>
         </div>
         <div class="content">
@@ -50,7 +51,7 @@
                     </table>
                 </div>
 
-                {% if infos %}
+                {% comment %} {% if infos %}
                 <div class="item">
                     <h3>存在问题的项目</h3>
                     <table class="layui-table" lay-skin="line">
@@ -68,7 +69,7 @@
                         </tbody>
                     </table>
                 </div>
-                {% endif %}
+                {% endif %} {% endcomment %}
                 
                 <div class="item" id="exp_1">
                     {% if activities %}
@@ -106,7 +107,7 @@
                                 <tr>
                                     <td>{{ vs.0 }} </td><td>{{ vs.1 }} </td><td>{{ vs.2 }} </td><td>{{ vs.3 }} </td>
                                     <td>{{ vs.4 }} </td> </td><td>{{ vs.5 }} </td><td>{{ vs.6 }} </td>
-                                    <td><button class="layui-btn-primary layui-btn-sm" onclick="deleteData(this, '/deleteStudentOrganization')" id={{ vs.7 }}>删除</button></td>
+                                    <td><button class="layui-btn layui-btn-danger layui-btn-sm" onclick="deleteData(this, '/deleteStudentOrganization')" id={{ vs.7 }}>删除</button></td>
                                 </tr>
                             {% endfor %}
                         {% endif %}
@@ -128,7 +129,7 @@
                                 <tr>
                                     <td>{{ vs.0 }} </td><td>{{ vs.1 }} </td><td>{{ vs.2 }} </td><td>{{ vs.3 }} </td>
                                     <td>{{ vs.4 }} </td>
-                                    <td><button class="layui-btn-primary layui-btn-sm" onclick="deleteData(this, '/deleteStudentScholar')" id={{ vs.5 }}>删除</button></td>
+                                    <td><button class="layui-btn layui-btn-danger layui-btn-sm" onclick="deleteData(this, '/deleteStudentScholar')" id={{ vs.5 }}>删除</button></td>
                                 </tr>
                             {% endfor %}
                         {% endif %}
@@ -136,6 +137,9 @@
                     <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="open_layer2()">
                         <i class="layui-icon">&#xe654;</i>
                     </button>
+            </div>
+            <div class="item" id="export">
+                <a href="/downloadDocx">导出文件</a>
             </div>
     </div>
 </body>

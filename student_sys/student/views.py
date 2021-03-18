@@ -28,14 +28,23 @@ class LoginView(View):
             if role == "教师":
                 request.session["role"] = "教师"
                 user = User.objects.get(username=u)
-                u_department = user.userprofile.get_department_display()  # 教师所在部门
-                org_res = getOrgByDeptName(dept_name=u_department)
-                scholar_res = getScholarByDeptName(dept_name=u_department)
-                return render(
-                    request,
-                    self.teacher_main_page,
-                    {"request": request, "user": u, "org_res": org_res, "sholar_res": scholar_res},
-                )
+                try:
+                    u_department = user.userprofile.get_department_display()  # 教师所在部门
+                    org_res = getOrgByDeptName(dept_name=u_department)
+                    scholar_res = getScholarByDeptName(dept_name=u_department)
+                    print(u_department, org_res, scholar_res)
+                    return render(
+                        request,
+                        self.teacher_main_page,
+                        {"user": u, "org_res": org_res, "scholar_res": scholar_res},
+                    )
+                except Exception as e:
+                    print(e)
+                    return render(
+                        request,
+                        self.teacher_main_page,
+                        {"user": u, "org_res": [], "scholar_res": []},
+                    )
             else:
                 reportDoc = ReportDocx(u)
                 infos = reportDoc.hint_list  # 错误提示
@@ -45,7 +54,6 @@ class LoginView(View):
                     request,
                     self.student_main_page,
                     {
-                        "request": request,
                         "user": u,
                         "infos": infos,
                         "meta_info": report["基础信息"],
@@ -73,14 +81,22 @@ class LoginView(View):
                     request.session["username"] = u
                     if u_group == "教师":
                         request.session["role"] = "教师"
-                        u_department = user.userprofile.get_department_display()  # 教师所在部门
-                        org_res = getOrgByDeptName(dept_name=u_department)
-                        scholar_res = getScholarByDeptName(dept_name=u_department)
-                        return render(
-                            request,
-                            self.teacher_main_page,
-                            {"request": request, "user": u, "org_res": org_res, "sholar_res": scholar_res},
-                        )
+                        try:
+                            u_department = user.userprofile.get_department_display()  # 教师所在部门
+                            org_res = getOrgByDeptName(dept_name=u_department)
+                            scholar_res = getScholarByDeptName(dept_name=u_department)
+                            return render(
+                                request,
+                                self.teacher_main_page,
+                                {"request": request, "user": u, "org_res": org_res, "scholar_res": scholar_res},
+                            )
+                        except Exception as e:
+                            print(e)
+                            return render(
+                                request,
+                                self.teacher_main_page,
+                                {"request": request, "user": u, "org_res": [], "scholar_res": []},
+                            )
                     else:
                         request.session["role"] = "学生"
                         reportDoc = ReportDocx(u)
@@ -116,16 +132,18 @@ def logoutView(request):
 
 
 def downloadDocxView(request):
-    if request.method == "POST":
+    if request.method == "POST":  # 教师页面发出
         student_id = request.POST.get("_id")
-        reportDoc = ReportDocx(student_id)
-        reportDoc.generate_docx()  # 生成docx文件
-        response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-        response["Content-Disposition"] = f"attachment; filename={student_id}-report.docx"
-        reportDoc.document.save(response)
-        return response
-    else:
-        return render(request, "main.html")
+    else: # 学生页面发出
+        student_id = request.session["username"]
+        
+    reportDoc = ReportDocx(student_id)
+    reportDoc.generate_docx()  # 生成docx文件
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    response["Content-Disposition"] = f"attachment; filename={student_id}-report.docx"
+    reportDoc.document.save(response)
+    
+    return response
 
 
 @login_required(login_url="")
@@ -143,12 +161,13 @@ def checkDocxView(request):
     else:
         response = ""
         base_info = """
-            <table id='base'>
+            <h3>个人基本信息</h3>
+            <table class='layui-table' lay-skin='line'>
                 <tr>
-                    <td>所在学院: %s</td><td>年级: %s</td><td>专业: %s</td>
+                    <th>所在学院</th><th>年级</th><th>专业</th><th>学号</th><th>姓名</th><th>性别</th>
                 </tr>
                 <tr>
-                    <td>学号: %s</td><td>姓名: %s</td><td>性别: %s</td>
+                    <td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>
                 </tr>
             </table>
             """ % tuple(
@@ -165,7 +184,7 @@ def checkDocxView(request):
 
         for cate in report["参加活动经历"]:
             prj_html = f"<h3>{cate}</h3>"
-            table = "<table class='content'>" + head
+            table = "<table class='layui-table' lay-skin='line'>" + head
             for prj in report["参加活动经历"][cate]:
                 row = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % tuple(prj)
                 table += row
@@ -176,7 +195,7 @@ def checkDocxView(request):
 
         if report["学生组织经历"]:
             prj_html = f"<h3> 学生组织经历 </h3>"
-            table = """<table class='content'>
+            table = """<table class='layui-table' lay-skin='line'>
                 <tr>
                     <th>序号</th><th>开始时间</th><th>结束时间</th><th>所在部门</th><th>职位</th>
                     <th>指导单位</th><th>认证状态</th>
@@ -194,7 +213,7 @@ def checkDocxView(request):
 
         if report["获奖经历"]:
             prj_html = f"<h3>获奖经历</h3>"
-            table = """<table class='content'>
+            table = """<table class='layui-table' lay-skin='line'>
                 <tr>
                     <th>序号</th><th>获奖时间</th><th>奖励名称</th><th>奖励级别</th><th>认证状态</th>
                 </tr>
@@ -207,11 +226,11 @@ def checkDocxView(request):
             prj_html += table
             response += prj_html
 
-    if infos:
-        response += "<p>以下项目查询出错，很可能是没在项目表中找到对应的项目</p>"
-        for i, info in enumerate(infos):
-            a = "<p>" + f"{i+1}. " + info[0] + ": " + info[1] + "</p>"
-            response += a
+    # if infos:
+    #     response += "<p>以下项目查询出错，很可能是没在项目表中找到对应的项目</p>"
+    #     for i, info in enumerate(infos):
+    #         a = "<p>" + f"{i+1}. " + info[0] + ": " + info[1] + "</p>"
+    #         response += a
 
     return HttpResponse(response)
 

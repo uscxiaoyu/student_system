@@ -51,7 +51,7 @@ var submitData = function(form_tag, tb_tag, post_url, del_url) {
                 b = document.createElement("button");
                 b.setAttribute("id", r_id);
                 b.setAttribute("onclick", `deleteData(this, '${del_url}')`)
-                b.setAttribute("class", "layui-btn-primary layui-btn-sm");
+                b.setAttribute("class", "layui-btn layui-btn-danger layui-btn-sm");
                 b.appendChild(document.createTextNode("删除"));
                 td.appendChild(b);
                 new_tr.appendChild(td);

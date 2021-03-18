@@ -18,7 +18,7 @@ class OrganizationProcess(models.Model):
         return "<student_id: {}, org_id: {}>".format(self.student_id, self.org_id)
 
     class Meta:
-        verbose_name = verbose_name_plural = "组织活动流程管理"
+        verbose_name = verbose_name_plural = "组织活动流程信息"
 
 
 # 未认证奖学金
@@ -39,4 +39,4 @@ class ScholarProcess(models.Model):
         return "<student_id: {}, org_id: {}>".format(self.student_id, self.org_id)
 
     class Meta:
-        verbose_name = verbose_name_plural = "奖学金流程管理"
+        verbose_name = verbose_name_plural = "奖学金流程信息"

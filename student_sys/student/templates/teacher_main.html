@@ -34,13 +34,59 @@
         <div class="main">
             <div class="layui-tab layui-tab-card">
                 <ul class="layui-tab-title">
-                    <li class="layui-this">待认证记录</li>
+                    <li class="layui-this">待认证学生组织活动</li>
+                    <li>待认证学生奖学金</li>
                     <li>信息查询</li>
                 </ul>
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show">
-                        {% comment %} 此处为各学院的待认证组织经历和奖励经历列表 {% endcomment %}
-                        
+                        <table class="layui-table" lay-skin="line">
+                            <thead>
+                                <th>序号</th><th>学号</th><th>姓名</th><th>专业</th><th>组织名称</th><th>职位</th><th>开始时间</th>
+                                <th>结束时间</th><th>隶属部门</th><th>认证状态</th><th>操作</th>
+                            </thead>
+                            {% if org_res %}
+                                {% for row in org_res %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td><td>{{ row.0 }}</td>
+                                        <td>{{ row.1 }}</td><td>{{ row.2}}</td>
+                                        <td>{{ row.3 }}</td><td>{{ row.4 }}</td>
+                                        <td>{{ row.5 }}</td><td>{{ row.6 }}</td>
+                                        <td>{{ row.7 }}</td><td>{{ row.8 }}</td>
+                                        <td>
+                                            <span id={{ vs.9 }}>
+                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="#">通过</button>
+                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="#">返修</button>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </table>
+                    </div>
+                    <div class="layui-tab-item">
+                        <table class="layui-table" lay-skin="line">
+                            <thead>
+                                <th>序号</th><th>学号</th><th>姓名</th><th>专业</th><th>获奖名称</th>
+                                <th>获奖时间</th><th>获奖等级</th><th>认证状态</th><th>操作</th>
+                            </thead>
+                            {% if scholar_res %}
+                                {% for row in scholar_res %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td><td>{{ row.0 }}</td>
+                                        <td>{{ row.1 }}</td><td>{{ row.2}}</td>
+                                        <td>{{ row.3 }}</td><td>{{ row.4 }}</td>
+                                        <td>{{ row.5 }}</td><td>{{ row.6 }}</td>
+                                        <td>
+                                            <span id={{ vs.7 }}>
+                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="#">通过</button>
+                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="#">返修</button>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </table>
                     </div>
                     <div class="layui-tab-item">
                         <div class="search">
@@ -51,14 +97,14 @@
                                 </div>
                             </form>
                             <div class="layui-item">
-                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="submitDATA()">查看</button>
+                                <button onclick="submitDATA()">查看</button>
                             </div>
                         </div>
                         <div class="display_info" id="res_info"></div>
                         <span class="display_info" id="buttons" style="display:none">
-                            {% comment %} <button class="layui-btn layui-btn-sm" onclick="printMe()">打印</button> {% endcomment %}
-                            <button class="layui-btn" onclick="formSubmit()">导出</button>
+                            <button onclick="formSubmit()">导出</button>
                         </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,6 +117,10 @@
             mt.style.display = "none";
         }
     }
+
+    var clearValue = function (input_tg){
+        input_tg.value = ""
+    };
 
     var formSubmit = function () {
         document.getElementById("myForm").submit()

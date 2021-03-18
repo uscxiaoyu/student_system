@@ -55,6 +55,20 @@ body {
     background-color: #f5f5f5;
 }
 
+#export {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#export a {
+    display: block;
+    background-color: #f5f5f5;
+    padding: 0.2em;
+    border-radius: 2px;
+    border: 1px solid grey;
+}
+
 h1 {
     font-size: 2em;
     font-weight: bold;
@@ -102,7 +116,6 @@ li a:hover:not(.active) {
 }
 
 thead th {
-    font-family: SimHei;
     font-weight: bold;
     font-size: 120%;
     color: black
@@ -119,5 +132,5 @@ thead th {
 }
 
 .layui-table>tbody tr:hover {
-    background-color: #ffccc7;
+    background-color: #e6f7ff;
 }
