@@ -75,7 +75,7 @@ var updateOrganizationState = function(btn) {
     let sp = btn.parentNode;
     var td = sp.parentNode;
     var p_td = td.previousElementSibling;
-    let _id = parseInt(sp.id);
+    var _id = parseInt(sp.id);
     var btn_content = btn.textContent;
     if (btn_content == "通过") {
         var state = "已认证";
