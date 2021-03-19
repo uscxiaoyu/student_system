@@ -38,7 +38,7 @@ var submitDATA = function() {
     }
 }
 
-var updateScholarState = function(btn) {
+var updateCertifyState = function(btn, post_url) {
     let sp = btn.parentNode;
     var td = sp.parentNode;
     var p_td = td.previousElementSibling;
@@ -51,40 +51,7 @@ var updateScholarState = function(btn) {
     }
     axios({
         method: "post",
-        url: "/updateStudentScholar",
-        data: {
-            _id: _id,
-            state: state
-        }
-    }).then(function(res) {
-        if (res.data == "更新成功") {
-            if (btn_content == "通过") {
-                td.parentNode.remove()
-            } else {
-                p_td.innerHTML = "<span style='background-color: yellow'>反修中</span>"
-            }
-        } else {
-            window.alert("更新失败")
-        }
-    }).catch(function(res) {
-        window.alert(res)
-    })
-}
-
-var updateOrganizationState = function(btn) {
-    let sp = btn.parentNode;
-    var td = sp.parentNode;
-    var p_td = td.previousElementSibling;
-    var _id = parseInt(sp.id);
-    var btn_content = btn.textContent;
-    if (btn_content == "通过") {
-        var state = "已认证";
-    } else {
-        var state = "返修";
-    }
-    axios({
-        method: "post",
-        url: "/updateStudentOrganization",
+        url: post_url,
         data: {
             _id: _id,
             state: state

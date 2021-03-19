@@ -45,8 +45,8 @@
                                         <td>{{ row.7 }}</td><td>{{ row.8 }}</td>
                                         <td>
                                             <span id={{ row.9 }}>
-                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="updateOrganizationState(this)">通过</button>
-                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="updateOrganizationState(this)">返修</button>
+                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="updateCertifyState(this, 'updateStudentOrganizationState')">通过</button>
+                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="updateCertifyState(this, 'updateStudentOrganizationState')">返修</button>
                                             </span>
                                         </td>
                                     </tr>
@@ -69,8 +69,8 @@
                                         <td>{{ row.5 }}</td><td>{{ row.6 }}</td>
                                         <td>
                                             <span id={{ row.7 }}>
-                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="updateScholarState(this)">通过</button>
-                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="updateScholarState(this)">返修</button>
+                                                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="updateCertifyState(this, '/updateStudentScholarState')">通过</button>
+                                                <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="updateCertifyState(this, '/updateStudentScholarState')">返修</button>
                                             </span>
                                         </td>
                                     </tr>

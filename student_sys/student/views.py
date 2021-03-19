@@ -9,9 +9,11 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 from django.views import View
 from .models import Student, Project, StudentJoinProject, StudentOrganization, StudentScholar, UserProfile
+from workflow.models import ScholarProcess, OrganizationProcess
 from .write_docx import ReportDocx
 from .access_databases import getOrgByDeptName, getScholarByDeptName
 import json
+import datetime
 
 
 class LoginView(View):
@@ -284,10 +286,14 @@ def deleteStudentOrganization(request, r_id):
 def updateOrganizationState(request):
     try:
         body = request.body.decode("utf-8")
+        user = request.session["username"]
         res = json.loads(body)
-        _id = res["_id"]
+        org_id = res["_id"]
         state = res["state"]
-        StudentOrganization.objects.filter(id=_id).update(certify_state=state)
+        inst_org = StudentOrganization.objects.get(id=org_id)
+        inst_org.certify_state = state
+        OrganizationProcess.objects.create(**{"student_id": inst_org.s_id, "org_id": org_id, "admin_id":user, 
+                                         "update_time": datetime.datetime.now(), "state": state})
         return HttpResponse("更新成功")
     except Exception as e:
         print(e)
@@ -298,11 +304,15 @@ def updateOrganizationState(request):
 def updateScholarState(request):
     try:
         body = request.body.decode("utf-8")
+        user = request.session["username"]
         res = json.loads(body)
-        print(res)
-        _id = res["_id"]
+        scholar_id = res["_id"]
         state = res["state"]
-        StudentScholar.objects.filter(id=_id).update(certify_state=state)
+        inst_scholar = StudentScholar.objects.get(id=scholar_id)
+        inst_scholar.certify_state = state
+        ScholarProcess.objects.create(**{"student_id": inst_scholar.s_id, "scholar_id": scholar_id, "admin_id":user, 
+                                         "update_time": datetime.datetime.now(), "state": state})
+        print(inst_scholar)
         return HttpResponse("更新成功")
     except Exception as e:
         print(e)
