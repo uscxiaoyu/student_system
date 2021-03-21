@@ -96,6 +96,7 @@ class StudentOrganization(models.Model):
     department_name = models.CharField(max_length=128, verbose_name="部门名称")
     certify_state = models.CharField(max_length=64, verbose_name="认证状态", default="未认证", blank=True)
     created_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name="创建时间")
+    update_time = models.DateTimeField(null=True, editable=False, verbose_name="更新时间")
 
     def __str__(self) -> str:
         return "<student_id: {}, org_name: {}, position: {}>".format(self.s_id, self.org_name, self.position)
@@ -117,6 +118,7 @@ class StudentScholar(models.Model):
     level = models.CharField(max_length=64, verbose_name="奖学金级别")
     certify_state = models.CharField(max_length=64, verbose_name="认证状态", default="未认证", blank=True)
     created_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name="创建时间")
+    update_time = models.DateTimeField(null=True, editable=False, verbose_name="更新时间")
 
     def __str__(self) -> str:
         return "<student_id: {}, scholar_name: {}, level: {}>".format(self.s_id, self.scholar_name, self.level)

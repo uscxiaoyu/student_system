@@ -51,7 +51,6 @@ class LoginView(View):
                 reportDoc = ReportDocx(u)
                 infos = reportDoc.hint_list  # 错误提示
                 report = reportDoc.student_report  # 学生信息
-                print(request, report["参加活动经历"])
                 return render(
                     request,
                     self.student_main_page,
@@ -104,7 +103,6 @@ class LoginView(View):
                         reportDoc = ReportDocx(u)
                         infos = reportDoc.hint_list  # 错误提示
                         report = reportDoc.student_report  # 学生信息
-                        print(request, report["参加活动经历"])
                         return render(
                             request,
                             self.student_main_page,
@@ -136,15 +134,15 @@ def logoutView(request):
 def downloadDocxView(request):
     if request.method == "POST":  # 教师页面发出
         student_id = request.POST.get("_id")
-    else: # 学生页面发出
+    else:  # 学生页面发出
         student_id = request.session["username"]
-        
+
     reportDoc = ReportDocx(student_id)
     reportDoc.generate_docx()  # 生成docx文件
     response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     response["Content-Disposition"] = f"attachment; filename={student_id}-report.docx"
     reportDoc.document.save(response)
-    
+
     return response
 
 
@@ -292,8 +290,15 @@ def updateOrganizationState(request):
         state = res["state"]
         inst_org = StudentOrganization.objects.get(id=org_id)
         inst_org.certify_state = state
-        OrganizationProcess.objects.create(**{"student_id": inst_org.s_id, "org_id": org_id, "admin_id":user, 
-                                         "update_time": datetime.datetime.now(), "state": state})
+        OrganizationProcess.objects.create(
+            **{
+                "student_id": inst_org.s_id,
+                "org_id": org_id,
+                "admin_id": user,
+                "update_time": datetime.datetime.now(),
+                "state": state,
+            }
+        )
         return HttpResponse("更新成功")
     except Exception as e:
         print(e)
@@ -310,8 +315,15 @@ def updateScholarState(request):
         state = res["state"]
         inst_scholar = StudentScholar.objects.get(id=scholar_id)
         inst_scholar.certify_state = state
-        ScholarProcess.objects.create(**{"student_id": inst_scholar.s_id, "scholar_id": scholar_id, "admin_id":user, 
-                                         "update_time": datetime.datetime.now(), "state": state})
+        ScholarProcess.objects.create(
+            **{
+                "student_id": inst_scholar.s_id,
+                "scholar_id": scholar_id,
+                "admin_id": user,
+                "update_time": datetime.datetime.now(),
+                "state": state,
+            }
+        )
         print(inst_scholar)
         return HttpResponse("更新成功")
     except Exception as e:
@@ -319,3 +331,39 @@ def updateScholarState(request):
         return HttpResponse("更新失败")
 
 
+@login_required(login_url="")
+def updateStudentOrganization(request):
+    try:
+        body = request.body.decode("utf-8")
+        res = json.loads(body)
+        _id = res["_id"]
+        org = StudentOrganization.objects.get(id=_id)
+        org.start_time = res["start_time"]
+        org.end_time = res["end_time"]
+        org.org_name = res["org_name"]
+        org.position = res["position"]
+        org.department_name = res["department_name"]
+        org.update_time = datetime.datetime.now()
+        org.certify_state = "未认证"  # 修改之后默认重新提交
+        org.save()
+        return HttpResponse("更新成功")
+    except Exception as e:
+        return HttpResponse(str(e))
+
+
+@login_required(login_url="")
+def updateStudentScholar(request):
+    try:
+        body = request.body.decode("utf-8")
+        res = json.loads(body)
+        _id = res["_id"]
+        scholar = StudentScholar.objects.get(id=_id)
+        scholar.g_time = res["g_time"]
+        scholar.scholar_name = res["scholar_name"]
+        scholar.level = res["level"]
+        scholar.certify_state = "未认证"  # 修改之后默认重新提交
+        scholar.update_time = datetime.datetime.now()
+        scholar.save()
+        return HttpResponse("更新成功")
+    except Exception as e:
+        return HttpResponse(str(e))

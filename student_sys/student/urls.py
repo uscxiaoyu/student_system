@@ -12,4 +12,6 @@ urlpatterns = [
     path("deleteStudentScholar/<int:r_id>", views.deleteStudentScholar, name="deleteStudentScholar"),
     path("updateStudentOrganizationState", views.updateOrganizationState, name="updateStudentOrganizationState"),
     path("updateStudentScholarState", views.updateScholarState, name="updateStudentScholarState"),
+    path("updateStudentOrganization", views.updateStudentOrganization, name="updateStudentOrganization"),
+    path("updateStudentScholar", views.updateStudentScholar, name="updateStudentScholar"),
 ]

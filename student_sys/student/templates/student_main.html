@@ -107,7 +107,10 @@
                                 <tr>
                                     <td>{{ vs.0 }} </td><td>{{ vs.1 }} </td><td>{{ vs.2 }} </td><td>{{ vs.3 }} </td>
                                     <td>{{ vs.4 }} </td> </td><td>{{ vs.5 }} </td><td>{{ vs.6 }} </td>
-                                    <td><button class="layui-btn layui-btn-danger layui-btn-sm" onclick="deleteData(this, '/deleteStudentOrganization')" id={{ vs.7 }}>删除</button></td>
+                                    <td id={{ vs.7 }}>
+                                        <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="open_layer3(this)">更新</button>
+                                        <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="deleteData(this, '/deleteStudentOrganization')">删除</button>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         {% endif %}
@@ -129,7 +132,10 @@
                                 <tr>
                                     <td>{{ vs.0 }} </td><td>{{ vs.1 }} </td><td>{{ vs.2 }} </td><td>{{ vs.3 }} </td>
                                     <td>{{ vs.4 }} </td>
-                                    <td><button class="layui-btn layui-btn-danger layui-btn-sm" onclick="deleteData(this, '/deleteStudentScholar')" id={{ vs.5 }}>删除</button></td>
+                                    <td id={{ vs.5 }}>
+                                        <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="open_layer4(this)">更新</button>
+                                        <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="deleteData(this, '/deleteStudentScholar')">删除</button>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         {% endif %}
@@ -139,7 +145,7 @@
                     </button>
             </div>
             <div class="item" id="export">
-                <a href="/downloadDocx">导出文件</a>
+                <a href="/downloadDocx">导出</a>
             </div>
     </div>
 </body>

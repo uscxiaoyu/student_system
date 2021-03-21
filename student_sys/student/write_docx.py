@@ -101,13 +101,13 @@ class ReportDocx:
                 self.student_report["学生组织经历"] = [
                     [
                         str(i),
-                        r.start_time.strftime("%Y年%m月"),
-                        r.end_time.strftime("%Y年%m月"),
+                        r.start_time.strftime("%Y-%m-%d"),
+                        r.end_time.strftime("%Y-%m-%d"),
                         r.org_name,
                         r.position,
                         r.department_name,
                         r.certify_state,
-                        str(r.id) + "_O"
+                        str(r.id) + "_O",
                     ]
                     for i, r in enumerate(organizationRecords, start=1)
                 ]
