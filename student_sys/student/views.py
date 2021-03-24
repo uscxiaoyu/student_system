@@ -131,6 +131,35 @@ def logoutView(request):
     return redirect("student:login")
 
 
+def signUpView(request):
+    if request.method == "GET":
+        return render(request, "signUp.html")
+
+    if request.method == "POST":
+        body = request.body.decode("utf-8")
+        res = json.loads(body)
+        username = res["username"]
+        password = res["password"]
+        email = res["email"]
+        print(res)
+        if User.objects.filter(username=username):
+            return HttpResponse(f"<span style='color: red'>用户{username}已有注册记录！若非本人注册，请联系辅导员！</span>")
+        else:
+            try:
+                user = User()
+                user.username = username
+                user.set_password(password)  # 注意，此处会转换，数据库不保存明文密码
+                user.email = email
+                user.is_active = 1
+                user.is_staff = 0
+                user.date_joined = datetime.datetime.now()
+                user.save()
+                user.groups.add(2)
+                return HttpResponse("<span>恭喜你！注册成功！<a href='/'>返回登陆页</a></span>")
+            except Exception as e:
+                return HttpResponse(str(e))
+
+
 def downloadDocxView(request):
     if request.method == "POST":  # 教师页面发出
         student_id = request.POST.get("_id")
@@ -152,7 +181,7 @@ def checkDocxView(request):
     res = json.loads(body)
     student_id = res["s_id"]
     reportDoc = ReportDocx(student_id)
-    infos = reportDoc.hint_list
+    # infos = reportDoc.hint_list
     report = reportDoc.student_report
     response = ""
     if not report:

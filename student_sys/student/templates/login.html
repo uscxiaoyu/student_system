@@ -27,32 +27,14 @@
                     {% comment %} <label for="pwd">密码</label> {% endcomment %}
                     <input type="password" name="pwd" id="pwd" placeholder="输入密码" onfocus="clearAlarm()"><br> 
                     <span class='alarm-info'></span>
-                    
-                    {% comment %} <p>
-                        <span style="font-size: 0.9em; font-weight: lighter">
-                            <input type="radio" name="role" id="role" value="学生" checked="checked">学生
-                        </span>
-                        <span style="font-size: 0.9em; font-weight: lighter">
-                            <input type="radio" name="role" id="role" value="教师">教师
-                        </span>
-                    </p> {% endcomment %}
-                    {% comment %} <p>
-                        <button type="button" onclick="submitDATA()">登陆</button>
-                        <button type="reset" style="margin-left: 2em" onclick="clearAlarm()">重置</button>
-                        <span class="alarm-info"></span>
-                    </p> {% endcomment %}
                    
                     <input type="submit" id="subm" value="登录" />
                     
-                    {% comment %} <p>
-                        <a href="signUp.html">注册</a>
-                        <a href="findPwd.html">密码找回</a>
-                    </p> {% endcomment %}
                 </form>
             </div>
         </div>
         <div class="footer">
-            <p> <a href="/admin">后台管理</a> | <a href="http://www.suibe.edu.cn/">学校主页</a> | 版权所有©2021 肖宇</p>
+            <p> <a href="/signUp">学生用户注册</a> | <a href="/admin">后台管理</a> | <a href="http://www.suibe.edu.cn/">学校主页</a> | 版权所有©2021 肖宇</p>
         </div>
     </div>
 </body>
@@ -119,7 +101,6 @@
         } else {
         }
 
-    }
-
+    };
 </script>
 </html>

@@ -4,164 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="/public/vue.js"></script>
-    <script src="/public/axios.min.js"></script>
-    <script src="/public/marked.min.js"></script>
-    <link rel="stylesheet" href="../public/main.css">
-    <title>注册</title>
+    <link rel="stylesheet", href="../static/layui/css/layui.css">
+    <script src="/static/axios.min.js"></script>
+    <script src="../static/layui/layui.all.js"></script>
     <style>
-        #signup {
-            margin: 20px auto;
-            padding: 20px;
-            background-color: ghostwhite;
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
         }
 
-        fieldset {
-            position: relative;
-            left: 10%;
-            margin: 20px auto;
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 800px 1fr;
+            grid-template-rows: 60px auto;
+            grid-template-areas: ". header ." ". content .";
+            grid-gap: 5px
         }
 
-        fieldset input {
-            width: 40%;
-            background-color: aliceblue;
+        .header {
+            grid-area: header;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1em;
+            border-radius: 2px;
+            background-color: #ffffff;
+            opacity: 0.8;
         }
 
-        fieldset textarea {
-            width: 60%;
+        .content {
+            grid-area: content;
+            display: flex;
+            border-radius: 2px;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1em;
+            background-color: #ffffff;
+            border-radius: 2px;
         }
 
-        button {
-            position: relative;
-            left: 20%;
-            padding: 0.5em 1em;
-            border-radius: 5px;
-            box-shadow: 0 0 0.5em rgba(93, 162, 248, 0.5);
+        .layui-form-mid, .layui-word-aux, .alarm {
+            color: red;
         }
-
-        p span {
-            color: gray;
-            font-weight: 200;
-        }
-
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="logo">
-                <h1>测验管理系统</h1>
+                <h1>学生用户注册</h1>
             </div>
         </div>
+
         <div class="content">
-            <div id="signup">
-                <form action="/signupPost" method="post">
-                    <fieldset>
-                        <legend>基本信息</legend>
-                        <p>
-                            <label for="s_id">学号: </label>
-                            <input type="text" name="s_id" id="s_id" v-model.trim="user_id">
-                            <span v-if="!user_id">请输入7位学号</span>
-                            <span v-else-if="user_id.length <= 7">已输入{{user_id.length}}/7位</span>
-                            <span v-else style="color:indianred">学号超过7位</span>
-                        </p>
-                        <p>
-                            <label for="s_name">姓名: </label>
-                            <input type="text" name="s_name" id="s_name" v-model.trim="user_name">
-                            <span v-if="!user_name">请输入姓名</span>
-                        </p>
-                        <p>
-                            <label for="pwd">密码: </label> 
-                            <input type="password" name="pwd" id="pwd" v-model.trim="password1">
-                            <span v-if="!password1">请输入密码</span>
-                        </p>
-                        <p>
-                            <label for="pwd2">确认密码: </label> 
-                            <input type="password" name="pwd2" id="pwd2" v-model.trim="password2">
-                            <span v-if="!password2">请确认密码</span>
-                            <span v-else-if="password1 == password2" style="color: limegreen">两次密码输入一致</span>
-                        </p>
-                        <p>
-                            <label for="email">邮箱: </label> 
-                            <input type="email" name="email" id="email" v-model.lazy="email">
-                            <span v-if="!email">请输入邮箱</span>
-                            <span v-else-if="!email.includes('@')" style='color:indianred'>请正确输入邮箱</span>
-                        
-                        </p>
-                        <p>
-                            <label for="major">专业: </label>
-                            <input type="text" name="major" id="major" v-model.trim="major">
-                            <span v-if="!major">请填写专业</span>
-                        </p>
-                        <p>
-                            <label for="gender">性别: </label>
-                            <div style="position: relative; left:10%; font-weight: 300">
-                                男<input type="radio" name="gender" id="gender" value="男" style="width:2em">
-                                女<input type="radio" name="gender" id="gender" value="女" style="width:2em" checked="checked">
-                            </div>
-                        </p>
-                        
-                        <p id="select"><label for="dept">院系:</label>
-                            <select name="department" id="department">
-                                <option v-for="item in depts" v-bind:value="item.dept">{{item.dept}}</option>
-                            </select>
-                        </p>
-                    </fieldset>
+            <div class="login">
+                <form action="" id="signForm">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">学号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="username" id="username" required  lay-verify="required" placeholder="请输入学号" autocomplete="off" class="layui-input" onfocus="clearAlarm()">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux alarm" id="alarm_username"></div>
+                    </div>
 
-                    <fieldset id="inte">
-                        <legend>兴趣爱好</legend>
-                        <p><label for="interest"><textarea name="interest" id="interest" cols="30" rows="10"></textarea></label></p>
-                    </fieldset>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-inline">
+                            <input type="password" name="password" id="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input" onfocus="clearAlarm()">
+                        </div>
+                    </div>
 
-                    <button type="submit">提交</button>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邮箱</label>
+                        <div class="layui-input-inline">
+                            <input type="email" name="email" id="email" required lay-verify="required" placeholder="请输入常用邮箱" autocomplete="off" class="layui-input" onfocus="clearAlarm()">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux alarm" id="alarm_mail"></div>
+                    </div>
                 </form>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" onclick="submitData()">提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary" for="signForm">重置</button>
+                    </div>
+                    <div class="layui-input-inline">
+                        <div class="layui-form-mid layui-word-aux alarm" id="result"></div>
+                    </div>
+                    
+                </div>
+                
             </div>
-        </div>
-        
-        <div class="footer">
-            <p style="text-align: center"> <a href="index.html">首页</a> | <a href="">关于本系统</a> | ©2019- 肖宇. All Rights
-                Reserved.</p>
         </div>
     </div>
 </body>
 <script>
-    vm1 = new Vue({
-        el: "#select",
-        data: {
-            depts: [{dept: '统计与信息学院'},
-                    {dept: '金融管理学院'},
-                    {dept: '经贸学院'},
-                    {dept: '法学院'},
-                    {dept: '工商管理学院'},
-                    {dept: '国际商务外语学院'},
-                    {dept: '会展与旅游学院'},
-                    {dept: '国际交流学院'},
-                    {dept: '马克思主义学院'},
-                    {dept: '会计学院'},
-                    {dept: '继续教育学院'},
-                    {dept: '贸易谈判学院'},
-                    {dept: '创业学院'}]
-        }
-    });
+    var submitData = function () {
+        var username = document.getElementById("username").value.trim();
+        var password = document.getElementById("password").value.trim();
+        var email = document.getElementById("email").value.trim();
+        console.log(username, password, email)
+        let myReg_username=/\d{8,12}/;
+        let myReg_mail=/^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/;
+        if (!myReg_username.test(username)) {
+            document.getElementById("alarm_username").innerText = "学号位数不对!";
+            if (!myReg_mail.test(email)) {
+                document.getElementById("alarm_mail").innerText = "邮箱格式不对! 邮箱用于确认和找回密码!"
+            };
+            return false
+        };
 
-    vm2 = new Vue({
-        el: "#signup",
-        data: {
-            user_id: '',
-            user_name: '',
-            password1: '',
-            password2: '',
-            email: '',
-            major: ''
-        }
-    })
+        axios({
+            method: "post",
+            url: "/signUp",
+            data: {
+                username: username,
+                password: password,
+                email: email
+            }
+        }).then(function(res){
+            document.getElementById("result").innerHTML = res.data;
+        }).catch(function(err){
+            window.alert(err);
+        })
+    } 
 
-    async function getUser() {
-        try {
-            const response = await axios.get('/user?ID=12345');
-            console.log(response);
-        } catch (error) {
-            console.error(error);
+    function clearAlarm(){
+        var myAlarms = document.getElementsByClassName("alarm");
+        for (let al of myAlarms) {
+            al.innerText = "";
         }
     }
 </script>
