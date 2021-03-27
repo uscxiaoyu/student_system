@@ -1,4 +1,5 @@
-from re import template
+import enum
+from openpyxl import load_workbook
 from django.contrib import auth
 from django.http import JsonResponse
 from django.http.response import Http404, HttpResponse, HttpResponseNotAllowed
@@ -14,6 +15,7 @@ from .write_docx import ReportDocx
 from .access_databases import getOrgByDeptName, getScholarByDeptName
 import json
 import datetime
+import re
 
 
 class LoginView(View):
@@ -396,3 +398,49 @@ def updateStudentScholar(request):
         return HttpResponse("更新成功")
     except Exception as e:
         return HttpResponse(str(e))
+
+
+@login_required(login_url="")
+def uploadFile(request):
+    """
+    上传学生奖学金记录或组织活动记录
+    """
+    try:
+        col_names = ["学号", "奖学金名称", "奖学金级别", "组织名称", "职位", "隶属部门", "开始时间", "结束时间", "获奖时间"]
+        print(request.FILES["file"])
+        wb = load_workbook(request.FILES["file"])
+        sheet = wb[wb.sheetnames[0]]
+        d_dict = {}
+        for col in sheet.columns:
+            col_value = [re.sub("\s", "", c.value) if isinstance(c.value, str) else c.value for c in col]
+            for v in col_names:
+                if v in col_value:
+                    d_dict[v] = col_value[col_value.index(v) + 1 :]
+        print(d_dict)
+        if len(d_dict) == 4:
+            for i, s_id in enumerate(d_dict["学号"]):
+                s = StudentScholar()
+                s.s_id = s_id
+                s.g_time = d_dict["获奖时间"][i]
+                s.scholar_name = d_dict["奖学金名称"][i]
+                s.level = d_dict["奖学金级别"][i]
+                s.certify_state = "已认证"
+                s.save()
+        elif len(d_dict) == 6:
+            for i, s_id in enumerate(d_dict["学号"]):
+                o = StudentOrganization()
+                o.s_id = s_id
+                o.org_name = d_dict["组织名称"][i]
+                o.position = d_dict["职位"][i]
+                o.start_time = d_dict["开始时间"][i]
+                o.end_time = d_dict["结束时间"][i]
+                o.department_name = d_dict["部门名称"][i]
+                o.certify_state = "已认证"
+                o.save()
+        else:
+            raise ValueError("表格列数不对！")
+
+        return JsonResponse({"res": "上传记录成功!"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"res": "上传记录失败!", "error": str(e)})

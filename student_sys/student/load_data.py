@@ -14,8 +14,7 @@ from student.models import Student, Project, StudentJoinProject
 
 BASE_DIR = "data/"
 PATTERN = re.compile("\d+\s+(.+).xls")  # 匹配文件名
-COL_NAMES = ["学号", "姓名", "性别", "学院", "年级", "专业", 
-             "活动类型", "活动时间", "主办单位", "活动名称", "认证状态"]
+COL_NAMES = ["学号", "姓名", "性别", "学院", "年级", "专业", "活动类型", "活动时间", "主办单位", "活动名称", "认证状态"]
 
 
 def load_excel(f_path, col_names=COL_NAMES):
@@ -23,27 +22,28 @@ def load_excel(f_path, col_names=COL_NAMES):
     读取excel文件
     """
     d_dict = {}
-    if '.xlsx' in f_path:
+    if ".xlsx" in f_path:
         wb = load_workbook(filename=f_path)
         sheet = wb[wb.sheetnames[0]]
         for col in sheet.columns:
             col_value = [re.sub("\s", "", c.value) if isinstance(c.value, str) else c.value for c in col]
             for v in col_names:
                 if v in col_value:
-                    d_dict[v] = col_value[col_value.index(v)+1: ]
-                
-    elif '.xls' in f_path:
+                    d_dict[v] = col_value[col_value.index(v) + 1 :]
+
+    elif ".xls" in f_path:
         wb = open_workbook(filename=f_path)
         sheet = wb.sheet_by_index(0)
         for i in range(sheet.ncols):
             col_value = [re.sub("\s", "", c.value) if isinstance(c.value, str) else c.value for c in sheet.col(i)]
             for v in col_names:
                 if v in col_value:
-                    d_dict[v] = col_value[col_value.index(v)+1: ]
+                    d_dict[v] = col_value[col_value.index(v) + 1 :]
     else:
         print("请输入xls或者xlsx文件!")
-                
+
     return d_dict
+
 
 def insert_studentJoinProject(f_path, dir_name, semester, table=StudentJoinProject):
     """
@@ -53,26 +53,31 @@ def insert_studentJoinProject(f_path, dir_name, semester, table=StudentJoinProje
     info_text = ""
     if prj_names:  # 如果是合法的文件
         try:
-            d_dict = load_excel(dir_name + '/' + f_path)
+            d_dict = load_excel(dir_name + "/" + f_path)
             prj_name = prj_names[0]
             for i, s_id in enumerate(d_dict["学号"]):
                 if isinstance(s_id, (int, float)):
-                    table.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester)
-                elif isinstance(s_id, str) and ('/' in s_id or 'EBI' in s_id):
-                    table.objects.create(s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester)
+                    table.objects.create(
+                        s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester
+                    )
+                elif isinstance(s_id, str) and ("/" in s_id or "EBI" in s_id):
+                    table.objects.create(
+                        s_id=s_id, student_name=d_dict["姓名"][i], p_id=0, project_name=prj_name, semester=semester
+                    )
                 else:
                     print(f"    {s_id}, {d_dict['姓名'][i]}记录导入失败")
-                    info_text +='    ' + str(s_id) + '  '+ str(d_dict["姓名"][i]) + '\n'
+                    info_text += "    " + str(s_id) + "  " + str(d_dict["姓名"][i]) + "\n"
             print("  ", f_path, "导入成功")
         except Exception as e:
             print("  ", f_path, "导入失败", e)
-            info_text += f"{prj_name}出错: " + str(e) + '\n'
+            info_text += f"{prj_name}出错: " + str(e) + "\n"
         finally:
             return info_text
     else:
         print(f"{f_path}的项目名称为空!")
         info_text = f"{f_path}的项目名称为空!\n"
         return info_text
+
 
 def load_student(f_path):
     """
@@ -81,14 +86,17 @@ def load_student(f_path):
     d_dict = load_excel(f_path)
     for i, s_id in enumerate(d_dict["学号"]):
         record = {
-            "student_id": s_id, "name": d_dict["姓名"][i], 
-            "sex": 1 if d_dict["性别"][i]=="男" else 2,
+            "student_id": s_id,
+            "name": d_dict["姓名"][i],
+            "sex": 1 if d_dict["性别"][i] == "男" else 2,
             "department_name": d_dict["学院"][i],
             "major_name": d_dict["专业"][i],
-            "grade": int("20"+str(s_id)[:2])}
-        
+            "grade": int("20" + str(s_id)[:2]),
+        }
+
         Student.objects.create(**record)
-    
+
+
 def load_project(f_path):
     """
     导入项目记录
@@ -100,9 +108,10 @@ def load_project(f_path):
             "department_name": d_dict["主办单位"][i],
             "semester": d_dict["活动时间"][i],
             "category": d_dict["活动类型"][i],
-            "certify_state": d_dict["认证状态"][i]
+            "certify_state": d_dict["认证状态"][i],
         }
         Project.objects.create(**record)
+
 
 def load_studentjoinproject(dir_name, semester):
     """
@@ -118,32 +127,32 @@ def load_studentjoinproject(dir_name, semester):
 
         f.write("\n\n")
     except Exception as e:
-        f.write("出错: " + str(e) + '\n')
+        f.write("出错: " + str(e) + "\n")
     finally:
         f.close()
-    
+
     print(dir_name, "导入完成!")
     return
+
 
 if __name__ == "__main__":
     # student = Student.objects.all()[0]
     # print(student.student_id, student.name, student.department_name)
     StudentJoinProject.objects.all().delete()
-    s_dir= BASE_DIR + "活动名称与学生匹配表/"
-    dirs = [s_dir+d for d in os.listdir(s_dir)]
+    s_dir = BASE_DIR + "活动名称与学生匹配表/"
+    dirs = [s_dir + d for d in os.listdir(s_dir)]
     for dir_name in dirs:
         if "2018-2019学年第一学期校级品牌活动认定汇总表" in dir_name:
-            semester="2018-2019学年第一学期"
+            semester = "2018-2019学年第一学期"
         elif "2018-2019学年第二学期校级品牌活动认定汇总表" in dir_name:
-            semester="2018-2019学年第二学期"
+            semester = "2018-2019学年第二学期"
         elif "2019-2020学年第一学期校级品牌活动认定汇总表" in dir_name:
-            semester="2019-2020学年第一学期"
+            semester = "2019-2020学年第一学期"
         elif "2019-2020学年第二学期校级品牌活动认定汇总表" in dir_name:
-            semester="2019-2020学年第二学期"
+            semester = "2019-2020学年第二学期"
         else:
             print(dir_name, "is not found")
             break
-            
+
         load_studentjoinproject(dir_name, semester)
         print(f"{dir_name}导入成功!")
-        

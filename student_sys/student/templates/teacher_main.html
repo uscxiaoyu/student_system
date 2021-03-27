@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>教师工作主页</title>
     <script src="/static/axios.min.js"></script>
-    <script src="../static/layui/layui.all.js"></script>
+    <script src="/static/layui/layui.all.js"></script>
     <script src="/static/jsFiles/teacher.js"></script>
     <link rel="stylesheet", href="../static/layui/css/layui.css">
     <link rel="stylesheet" href="/static/cssFiles/teacher.css">
@@ -24,12 +24,30 @@
         <div class="main">
             <div class="layui-tab layui-tab-card">
                 <ul class="layui-tab-title">
-                    <li class="layui-this">待认证学生组织活动</li>
+                    <li class="layui-this">信息查询</li>
+                    <li>待认证学生组织活动</li>
                     <li>待认证学生奖学金</li>
-                    <li>信息查询</li>
+                    <li>批量上传</li>
                 </ul>
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show">
+                        <div class="search">
+                            <form class="layui-form" id="myForm" method="post" action="/downloadDocx">
+                                <div class="layui-item">
+                                    <input class="layui-input-inline" type="text" name="_id" id="_id" 
+                                        required lay-verify="required" placeholder="请输入学号" onfocus="clearAlarm()"/>
+                                </div>
+                            </form>
+                            <div class="layui-item">
+                                <button onclick="submitDATA()">查看</button>
+                            </div>
+                        </div>
+                        <div class="display_info" id="res_info"></div>
+                        <span class="display_info" id="buttons" style="display:none">
+                            <button onclick="formSubmit()">导出</button>
+                        </span>
+                    </div>
+                    <div class="layui-tab-item">
                         <table class="layui-table" lay-skin="line">
                             <thead>
                                 <th>序号</th><th>学号</th><th>姓名</th><th>专业</th><th>组织名称</th><th>职位</th><th>开始时间</th>
@@ -79,30 +97,51 @@
                         </table>
                     </div>
                     <div class="layui-tab-item">
-                        <div class="search">
-                            <form class="layui-form" id="myForm" method="post" action="/downloadDocx">
-                                <div class="layui-item">
-                                    <input class="layui-input-inline" type="text" name="_id" id="_id" 
-                                        required lay-verify="required" placeholder="请输入学号" onfocus="clearAlarm()"/>
-                                </div>
-                            </form>
-                            <div class="layui-item">
-                                <button onclick="submitDATA()">查看</button>
-                            </div>
-                        </div>
-                        <div class="display_info" id="res_info"></div>
-                        <span class="display_info" id="buttons" style="display:none">
-                            <button onclick="formSubmit()">导出</button>
-                        </span>
+                        <div>
+                            <span>
+                                <p>注意: 支持上传组织活动记录文件或者奖学金记录文件，具体格式见模板</p>
+                            </span>
+                            <hr>
+                            <button type="button" class="layui-btn layui-btn-warm excel-upload" id="oFile">
+                                <i class="layui-icon">&#xe67c;</i>记录上传
+                            </button>
+                            <hr>
+                            <a href="/static/organization_example.xlsx" download="组织活动模板">组织活动模板下载</a><br>
+                            <a href="/static/scholar_example.xlsx" download="奖学金文件模板">奖学金模板下载</a>
+                        <div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 <script>
     layui.use('element', function(){
         var element = layui.element;
     });
 </script>
+
+<script>
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        //执行实例
+        var item=this.item;
+        upload.render({
+            elem: '.excel-upload' //绑定元素
+            ,url: '/uploadFile' //上传接口
+            ,method: "post"
+            ,accept: "file"
+            ,exts: "xlsx"
+            ,size: 4096
+            ,done: function(res){
+                window.alert(res.res)
+            }
+            ,error: function(){
+                window.alert(res.res)
+            }
+        });
+    });
+</script>
+
 </html>
